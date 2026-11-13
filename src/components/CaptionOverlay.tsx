@@ -2,7 +2,7 @@ import {AbsoluteFill, interpolate, useCurrentFrame, useVideoConfig} from 'remoti
 import type {CaptionChunk} from '../core/captions';
 import {secondsToFrames} from '../core/timing';
 
-export function CaptionOverlay({chunks, offsetSeconds = 0}: {chunks: CaptionChunk[]; offsetSeconds?: number}) {
+export function CaptionOverlay({chunks, offsetSeconds = 0, theme = 'default'}: {chunks: CaptionChunk[]; offsetSeconds?: number; theme?: 'default' | 'voice-studio'}) {
   const frame = useCurrentFrame();
   const {fps} = useVideoConfig();
   const active = chunks.find((chunk) => {
@@ -18,9 +18,9 @@ export function CaptionOverlay({chunks, offsetSeconds = 0}: {chunks: CaptionChun
 
   return (
     <AbsoluteFill style={{justifyContent: 'flex-end', alignItems: 'center', paddingBottom: 290, pointerEvents: 'none'}}>
-      <div style={{transform: `scale(${entrance})`, display: 'flex', gap: 16, maxWidth: 900, flexWrap: 'wrap', justifyContent: 'center'}}>
+      <div style={{transform: `scale(${entrance})`, display: 'flex', gap: theme === 'voice-studio' ? 12 : 16, maxWidth: 900, flexWrap: 'wrap', justifyContent: 'center'}}>
         {words.map((word) => (
-          <span key={word} style={{fontFamily: 'Arial, sans-serif', fontSize: 58, fontWeight: 900, color: word.toLowerCase() === active.highlight?.toLowerCase() ? '#3B62DB' : '#141414', textShadow: '0 3px 0 #ffffff, 3px 0 0 #ffffff, -3px 0 0 #ffffff'}}>
+          <span key={word} style={{fontFamily: theme === 'voice-studio' ? 'Georgia, serif' : 'Arial, sans-serif', fontSize: theme === 'voice-studio' ? 62 : 58, fontWeight: 900, color: theme === 'voice-studio' ? '#F1C66D' : word.toLowerCase() === active.highlight?.toLowerCase() ? '#3B62DB' : '#141414', textShadow: theme === 'voice-studio' ? '0 4px 8px #111018' : '0 3px 0 #ffffff, 3px 0 0 #ffffff, -3px 0 0 #ffffff'}}>
             {word}
           </span>
         ))}

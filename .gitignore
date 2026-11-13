@@ -11,3 +11,4 @@ models/
 projects/*/data/
 projects/*/renders/
 public/generated/
+reference/

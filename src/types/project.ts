@@ -15,7 +15,7 @@ const VoiceSchema = z.object({
 const SceneSchema = z.object({
   id: z.string().min(1),
   lineId: z.string().min(1),
-  visualStyle: z.enum(['inside-out', 'three-proof', 'stick-story']),
+  visualStyle: z.enum(['inside-out', 'three-proof', 'stick-story', 'voice-studio']),
   description: z.string().min(1),
   environment: z.string().min(1),
   camera: z.object({preset: z.string().min(1)}),
