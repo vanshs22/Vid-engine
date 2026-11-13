@@ -1,0 +1,38 @@
+{
+  "name": "universal-ai-video-studio",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Local-first AI video production studio with Remotion and Three.js.",
+  "type": "module",
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "check": "npm run typecheck && npm test && npm run validate && npm run timing -- projects/sample/project.json",
+    "validate": "tsx scripts/validate-project.ts projects/sample/project.json",
+    "timing": "tsx scripts/generate-timing.ts",
+    "studio": "remotion studio src/index.tsx",
+    "prepare:render": "tsx scripts/prepare-render.ts",
+    "render:draft": "npm run prepare:render && remotion render src/index.tsx UniversalVideoStudio out/draft.mp4 --props=.tmp/render-props.json --gl=swangle --scale=0.5",
+    "render:final": "npm run prepare:render && remotion render src/index.tsx UniversalVideoStudio out/final.mp4 --props=.tmp/render-props.json --gl=swangle",
+    "render:still": "npm run prepare:render && remotion still src/index.tsx UniversalVideoStudio out/draft-frame.png --props=.tmp/render-props.json --frame=80 --gl=swangle --scale=0.5"
+  },
+  "dependencies": {
+    "@react-three/fiber": "9.8.2",
+    "@remotion/three": "4.0.543",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "remotion": "4.0.543",
+    "three": "0.187.0",
+    "zod": "4.6.7"
+  },
+  "devDependencies": {
+    "@remotion/cli": "4.0.543",
+    "@types/node": "26.6.6",
+    "@types/react": "19.1.16",
+    "@types/react-dom": "19.1.9",
+    "@types/three": "0.187.0",
+    "tsx": "4.20.3",
+    "typescript": "5.9.3",
+    "vitest": "5.1.0"
+  }
+}

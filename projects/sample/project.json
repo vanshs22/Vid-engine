@@ -1,0 +1,26 @@
+{
+  "id": "stickman-last-bus",
+  "title": "The Last Bus",
+  "format": { "width": 1080, "height": 1920, "fps": 30 },
+  "targetDurationSeconds": 26,
+  "style": "stick-story",
+  "voice": { "provider": "estimated", "name": "am_puck", "speed": 1 },
+  "music": { "mode": "none" },
+  "lines": [
+    { "id": "line-01", "text": "Milo had one job: catch the last bus home.", "caption": "CATCH THE *BUS", "sceneId": "stick-01", "gapSeconds": 0.28 },
+    { "id": "line-02", "text": "But his keys vanished five minutes before departure.", "caption": "THE KEYS *VANISHED", "sceneId": "stick-02", "gapSeconds": 0.28 },
+    { "id": "line-03", "text": "He searched the table, the sofa, even his own pockets.", "caption": "SEARCH *EVERYWHERE", "sceneId": "stick-03", "gapSeconds": 0.28 },
+    { "id": "line-04", "text": "Then he heard a tiny jingle behind the door.", "caption": "HEAR THAT *JINGLE?", "sceneId": "stick-04", "gapSeconds": 0.28 },
+    { "id": "line-05", "text": "His dog had hidden the keys inside a shoe.", "caption": "THE DOG *DID IT", "sceneId": "stick-05", "gapSeconds": 0.28 },
+    { "id": "line-06", "text": "Milo caught the bus, but the dog kept the shoe.", "caption": "EVERYONE *WINS", "sceneId": "stick-06", "gapSeconds": 0.4 }
+  ],
+  "scenes": [
+    { "id": "stick-01", "lineId": "line-01", "visualStyle": "stick-story", "description": "Catch the last bus", "environment": "bus stop at sunset", "camera": { "preset": "running push-in" }, "animation": ["run", "bus-waits"], "transition": "cut", "audioCues": [] },
+    { "id": "stick-02", "lineId": "line-02", "visualStyle": "stick-story", "description": "The keys vanished", "environment": "hallway table", "camera": { "preset": "key close-up" }, "animation": ["keys-wiggle", "worried-look"], "transition": "cut", "audioCues": [] },
+    { "id": "stick-03", "lineId": "line-03", "visualStyle": "stick-story", "description": "Search everywhere", "environment": "living room", "camera": { "preset": "search pan" }, "animation": ["search", "red-crosses"], "transition": "cut", "audioCues": [] },
+    { "id": "stick-04", "lineId": "line-04", "visualStyle": "stick-story", "description": "Hear that jingle?", "environment": "front door", "camera": { "preset": "reveal zoom" }, "animation": ["door-opens", "sound-waves"], "transition": "cut", "audioCues": [] },
+    { "id": "stick-05", "lineId": "line-05", "visualStyle": "stick-story", "description": "The dog did it", "environment": "front porch", "camera": { "preset": "comic reveal" }, "animation": ["dog-hops", "keys-rise"], "transition": "cut", "audioCues": [] },
+    { "id": "stick-06", "lineId": "line-06", "visualStyle": "stick-story", "description": "Everyone wins", "environment": "bus stop", "camera": { "preset": "wide payoff" }, "animation": ["bus-leaves", "celebrate"], "transition": "fade", "audioCues": [] }
+  ],
+  "sources": []
+}

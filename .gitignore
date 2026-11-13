@@ -1,0 +1,13 @@
+node_modules/
+__pycache__/
+out/
+.cache/
+.tmp/
+*.log
+.env
+.env.*
+!.env.example
+models/
+projects/*/data/
+projects/*/renders/
+public/generated/
