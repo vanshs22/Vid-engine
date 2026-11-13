@@ -13,6 +13,8 @@
 - Added a real procedural Three.js `voice-studio-3d` renderer.
 - Added perspective camera movement, warm/cool lighting, shadow-casting geometry, materials, acoustic panels, desk, laptop, microphone, fan, presenter, and animated voice orb.
 - Added a sentence-to-visual director in `src/engines/story/director.ts`.
+- Added a real local Director/agent foundation with Pydantic contracts, SQLite checkpoints, permissions, isolated project artifact workspaces, a 12-agent MVP registry, LangGraph-compatible graph construction, optional providers, local job queue, memory, editing, and Telegram adapters.
+- Added a Learning Supervisor that reviews every agent result and feeds lessons into later agent context.
 - Added semantic UI component selection for download, recording, voice design, generation, caption sync, and permission scenes.
 - Added local Kokoro narration generation.
 - Added faster-whisper word alignment with bundled FFmpeg/FFprobe fallback and monotonic timing repair.
@@ -53,10 +55,14 @@ Passed on 2026-11-13:
 - Final audio normalization: approximately -14 LUFS / -1 dBTP target.
 - Contact sheet generated at 3-second intervals.
 - QA report passed resolution, frame rate, duration, audio stream, and sampled blank-frame checks.
+- Agent backend smoke tests passed: registry and SQLite checkpoint creation.
+- Director MVP run completed with isolated agent artifacts and learning lessons.
 - Manual inspection of hook, semantic UI scenes, middle scene, and permission scene.
 
 ## Known limitations
 
+- The Director foundation is deterministic and local-first. Full LLM-backed research/script generation, LangGraph conditional execution in the Director path, and external vision review remain optional follow-up integrations.
+- The frontend dashboard, PostgreSQL/pgvector deployment, Telegram delivery, and full raw-footage edit automation are not yet complete.
 - The default 3D kit uses procedural primitives. Optional GLTF/GLB character/environment loading, skeletal clip selection, and morph-target mouth driving are available when licensed assets are supplied.
 - Generic phoneme-to-viseme mapping still needs asset-specific calibration for production facial lip sync.
 - Scene cache manifests and optional screen capture are implemented; full cached scene artifact stitching and browser installation remain deployment configuration work.
