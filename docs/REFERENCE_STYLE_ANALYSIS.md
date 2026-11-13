@@ -57,18 +57,16 @@ The final section includes a permission reminder about cloning a famous voice. T
 
 ## Reusable implementation
 
-The new `voice-studio` package uses original SVG components for:
+The new `voice-studio` package contains an SVG fallback, while `voice-studio-3d` adds an original Three.js scene kit with:
 
-- warm studio background;
-- presenter silhouette;
-- floating voice orb;
-- orbital rings;
-- microphone, desk, laptop, and fan;
-- download, recording, voice-design, generation, caption-sync, and permission UI cards;
-- step progress indicator;
-- waveform and slider controls.
+- a perspective camera and deterministic camera push;
+- warm/cool lights, shadow-casting geometry, a studio shell, floor, acoustic panels, desk, laptop, microphone, and fan;
+- a seated primitive presenter with body and gesture motion;
+- a floating orange voice orb with emissive material, face plate, antenna, and rotating torus rings;
+- React UI overlays for download, recording, design, generation, caption sync, and permission steps;
+- gold cinematic captions composited by Remotion.
 
-It does not copy the reference video’s exact frames, assets, text, character design, UI copy, or script.
+The implementation uses original geometry, copy, and layout. It does not copy the reference video's exact frames, assets, character design, UI copy, or script.
 
 ## Test explainer
 

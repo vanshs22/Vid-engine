@@ -44,7 +44,7 @@ Install the aligner separately:
 pip install faster-whisper numpy
 ```
 
-Install FFmpeg and FFprobe and make both commands available on `PATH`. Provide a local faster-whisper model directory to avoid an automatic download:
+Install FFmpeg and FFprobe, or use the bundled Remotion compositor binaries. The adapter automatically falls back to `node_modules/@remotion/compositor-linux-x64-gnu/ffmpeg` and `ffprobe` when system binaries are unavailable.
 
 ```bash
 python python/align.py projects/sample/project.json --model /path/to/whisper-small-en

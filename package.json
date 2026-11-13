@@ -14,7 +14,9 @@
     "prepare:render": "tsx scripts/prepare-render.ts",
     "render:draft": "npm run prepare:render && remotion render src/index.tsx UniversalVideoStudio out/draft.mp4 --props=.tmp/render-props.json --gl=swangle --scale=0.5",
     "render:final": "npm run prepare:render && remotion render src/index.tsx UniversalVideoStudio out/final.mp4 --props=.tmp/render-props.json --gl=swangle",
-    "render:still": "npm run prepare:render && remotion still src/index.tsx UniversalVideoStudio out/draft-frame.png --props=.tmp/render-props.json --frame=80 --gl=swangle --scale=0.5"
+    "render:still": "npm run prepare:render && remotion still src/index.tsx UniversalVideoStudio out/draft-frame.png --props=.tmp/render-props.json --frame=80 --gl=swangle --scale=0.5",
+    "qa:video": "tsx scripts/qa-video.ts out/voice-studio-explainer.mp4",
+    "contact-sheet": "node scripts/contact-sheet.mjs out/voice-studio-explainer.mp4 out/voice-studio-contact-sheet.svg"
   },
   "dependencies": {
     "@react-three/fiber": "9.8.2",

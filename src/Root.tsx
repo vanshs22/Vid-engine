@@ -10,6 +10,7 @@ import {InsideOutScene} from './styles/insideOut';
 import {ThreeProofScene} from './styles/threeProof';
 import {StickStoryScene} from './styles/stickStory';
 import {VoiceStudioScene} from './styles/voiceStudio';
+import {VoiceStudio3DScene} from './styles/voiceStudio3D';
 
 const project = parseProject(sampleProject);
 const timing = estimateTiming(project);
@@ -57,8 +58,8 @@ function VideoComposition(inputProps: unknown) {
         return (
           <Sequence key={scene.id} from={range.from} durationInFrames={range.durationInFrames} name={scene.id}>
             <SceneLayer scene={scene} durationInFrames={range.durationInFrames}>
-              {scene.visualStyle === 'three-proof' ? <ThreeProofScene scene={scene} /> : scene.visualStyle === 'stick-story' ? <StickStoryScene scene={scene} /> : scene.visualStyle === 'voice-studio' ? <VoiceStudioScene scene={scene} /> : <InsideOutScene scene={scene} />}
-              <CaptionOverlay chunks={captionChunks} offsetSeconds={lineTiming?.startSeconds ?? 0} theme={scene.visualStyle === 'voice-studio' ? 'voice-studio' : 'default'} />
+              {scene.visualStyle === 'three-proof' ? <ThreeProofScene scene={scene} /> : scene.visualStyle === 'stick-story' ? <StickStoryScene scene={scene} /> : scene.visualStyle === 'voice-studio-3d' ? <VoiceStudio3DScene scene={scene} /> : scene.visualStyle === 'voice-studio' ? <VoiceStudioScene scene={scene} /> : <InsideOutScene scene={scene} />}
+              <CaptionOverlay chunks={captionChunks} offsetSeconds={lineTiming?.startSeconds ?? 0} theme={scene.visualStyle === 'voice-studio' || scene.visualStyle === 'voice-studio-3d' ? 'voice-studio' : 'default'} />
             </SceneLayer>
           </Sequence>
         );

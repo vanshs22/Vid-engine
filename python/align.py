@@ -3,10 +3,13 @@
 from __future__ import annotations
 
 import argparse
+import io
 import json
+import os
 import re
 import shutil
 import subprocess
+import wave
 from difflib import SequenceMatcher
 from pathlib import Path
 
@@ -52,8 +55,10 @@ def main() -> None:
     parser.add_argument("--model", default=None, help="local faster-whisper model directory; use --allow-model-download with a model name")
     parser.add_argument("--allow-model-download", action="store_true", help="allow faster-whisper to download the named model")
     args = parser.parse_args()
-    if not shutil.which("ffmpeg") or not shutil.which("ffprobe"):
-        raise SystemExit("FFmpeg and FFprobe must be installed and available on PATH before alignment")
+    ffmpeg = os.environ.get("FFMPEG") or shutil.which("ffmpeg") or str(Path("node_modules/@remotion/compositor-linux-x64-gnu/ffmpeg").resolve())
+    ffprobe = os.environ.get("FFPROBE") or shutil.which("ffprobe") or str(Path("node_modules/@remotion/compositor-linux-x64-gnu/ffprobe").resolve())
+    if not Path(ffmpeg).exists() or not Path(ffprobe).exists():
+        raise SystemExit("FFmpeg and FFprobe must be installed or available through the Remotion compositor package")
     try:
         import numpy as np
         from faster_whisper import WhisperModel
@@ -70,7 +75,9 @@ def main() -> None:
     if not audio_path.exists():
         raise SystemExit(f"Audio file not found: {audio_path}")
     try:
-        raw = subprocess.run(["ffmpeg", "-v", "error", "-i", str(audio_path), "-ac", "1", "-ar", "16000", "-f", "f32le", "-"], check=True, capture_output=True).stdout
+        raw_wav = subprocess.run([ffmpeg, "-v", "error", "-i", str(audio_path), "-ac", "1", "-ar", "16000", "-f", "wav", "-"], check=True, capture_output=True).stdout
+        with wave.open(io.BytesIO(raw_wav), "rb") as wav:
+            raw = np.frombuffer(wav.readframes(wav.getnframes()), dtype=np.int16).astype(np.float32) / 32768.0
     except subprocess.CalledProcessError as exc:
         raise SystemExit(f"FFmpeg could not decode {audio_path}: {exc.stderr.decode(errors='replace').strip()}") from exc
     model = WhisperModel(model_name, device="cpu", compute_type="int8")
@@ -78,11 +85,18 @@ def main() -> None:
     heard = [(word.word.strip(), word.start + 0.04, word.end) for segment in segments for word in segment.words]
     script_words = [(word, line_index) for line_index, line in enumerate(project["lines"]) for word in line["text"].split() if normalize(word)]
     try:
-        duration = float(subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", str(audio_path)], check=True, capture_output=True, text=True).stdout)
+        duration = float(subprocess.run([ffprobe, "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", str(audio_path)], check=True, capture_output=True, text=True).stdout)
     except subprocess.CalledProcessError as exc:
         raise SystemExit(f"FFprobe could not read {audio_path}: {exc.stderr.strip()}") from exc
     aligned = align_words([word for word, _ in script_words], heard, 0.0, duration)
-    words = [{"text": word, "lineId": project["lines"][line_index]["id"], "lineIndex": line_index, "startSeconds": round(start, 3), "endSeconds": round(end, 3)} for (word, line_index), (start, end) in zip(script_words, aligned)]
+    normalized_aligned = []
+    previous_end = 0.0
+    for start, end in aligned:
+        start = max(float(start), previous_end)
+        end = max(float(end), start + 0.03)
+        normalized_aligned.append((start, end))
+        previous_end = end
+    words = [{"text": word, "lineId": project["lines"][line_index]["id"], "lineIndex": line_index, "startSeconds": round(start, 3), "endSeconds": round(end, 3)} for (word, line_index), (start, end) in zip(script_words, normalized_aligned)]
     lines = []
     for line_index, line in enumerate(project["lines"]):
         line_words = [word for word in words if word["lineIndex"] == line_index]
