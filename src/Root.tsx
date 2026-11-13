@@ -6,6 +6,7 @@ import {captionsForLine} from './core/captions';
 import {estimateTiming, secondsToFrames, timingForScene} from './core/timing';
 import {normalizeRenderProps, type RenderProps} from './core/renderProps';
 import {parseProject} from './types/project';
+import {directScene} from './engines/story/director';
 import {InsideOutScene} from './styles/insideOut';
 import {ThreeProofScene} from './styles/threeProof';
 import {StickStoryScene} from './styles/stickStory';
@@ -44,7 +45,7 @@ export function Root() {
 }
 
 function VideoComposition(inputProps: unknown) {
-  const {project, timing, narrationPath, musicPath} = normalizeRenderProps(inputProps, fallbackRenderProps);
+  const {project, timing, narrationPath, musicPath, mixPath} = normalizeRenderProps(inputProps, fallbackRenderProps);
   const {fps} = useVideoConfig();
 
   return (
@@ -55,17 +56,18 @@ function VideoComposition(inputProps: unknown) {
         if (!line) return null;
         const captionChunks = captionsForLine(line, timing);
         const lineTiming = timing.lines.find((candidate) => candidate.lineId === line.id);
+        const directedScene = scene.visualPlan ? scene : {...scene, visualPlan: directScene(line, scene)};
         return (
           <Sequence key={scene.id} from={range.from} durationInFrames={range.durationInFrames} name={scene.id}>
-            <SceneLayer scene={scene} durationInFrames={range.durationInFrames}>
-              {scene.visualStyle === 'three-proof' ? <ThreeProofScene scene={scene} /> : scene.visualStyle === 'stick-story' ? <StickStoryScene scene={scene} /> : scene.visualStyle === 'voice-studio-3d' ? <VoiceStudio3DScene scene={scene} /> : scene.visualStyle === 'voice-studio' ? <VoiceStudioScene scene={scene} /> : <InsideOutScene scene={scene} />}
-              <CaptionOverlay chunks={captionChunks} offsetSeconds={lineTiming?.startSeconds ?? 0} theme={scene.visualStyle === 'voice-studio' || scene.visualStyle === 'voice-studio-3d' ? 'voice-studio' : 'default'} />
+            <SceneLayer scene={directedScene} durationInFrames={range.durationInFrames}>
+              {directedScene.visualStyle === 'three-proof' ? <ThreeProofScene scene={directedScene} /> : directedScene.visualStyle === 'stick-story' ? <StickStoryScene scene={directedScene} /> : directedScene.visualStyle === 'voice-studio-3d' ? <VoiceStudio3DScene scene={directedScene} /> : directedScene.visualStyle === 'voice-studio' ? <VoiceStudioScene scene={directedScene} /> : <InsideOutScene scene={directedScene} />}
+              <CaptionOverlay chunks={captionChunks} offsetSeconds={lineTiming?.startSeconds ?? 0} theme={directedScene.visualStyle === 'voice-studio' || directedScene.visualStyle === 'voice-studio-3d' ? 'voice-studio' : 'default'} />
             </SceneLayer>
           </Sequence>
         );
       })}
-      {narrationPath ? <Audio src={staticFile(narrationPath)} /> : null}
-      {project.music.mode === 'file' && (musicPath ?? project.music.path) ? <Audio src={staticFile(musicPath ?? project.music.path!)} /> : null}
+      {mixPath ? <Audio src={staticFile(mixPath)} /> : narrationPath ? <Audio src={staticFile(narrationPath)} /> : null}
+      {!mixPath && project.music.mode === 'file' && (musicPath ?? project.music.path) ? <Audio src={staticFile(musicPath ?? project.music.path!)} /> : null}
     </AbsoluteFill>
   );
 }

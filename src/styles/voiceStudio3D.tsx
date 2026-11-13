@@ -1,6 +1,6 @@
 import {ThreeCanvas} from '@remotion/three';
 import {AbsoluteFill, interpolate, useCurrentFrame, useVideoConfig} from 'remotion';
-import type {Scene} from '../types/project';
+import type {Scene, VisualPlan} from '../types/project';
 
 const palette = {
   wall: '#2B2020',
@@ -17,7 +17,8 @@ const palette = {
 export function VoiceStudio3DScene({scene}: {scene: Scene}) {
   const frame = useCurrentFrame();
   const {width, height} = useVideoConfig();
-  const number = Number(scene.id.replace(/\D/g, '')) || 1;
+  const plan = scene.visualPlan;
+  const number = (plan?.stepIndex ?? (Number(scene.id.replace(/\D/g, '')) || 1) - 1) + 1;
   const progress = interpolate(frame, [0, 18], [0, 1], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'});
   const cameraX = Math.sin(frame / 180) * 0.18;
   const cameraZ = 11 - interpolate(frame, [0, 90], [0, 0.5], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'});
@@ -32,7 +33,7 @@ export function VoiceStudio3DScene({scene}: {scene: Scene}) {
         <pointLight position={[-3, 4, 1]} intensity={4} distance={9} color="#6E93FF" />
         <StudioGeometry frame={frame} sceneNumber={number} progress={progress} />
       </ThreeCanvas>
-      <UiOverlay sceneNumber={number} progress={progress} />
+      <UiOverlay sceneNumber={number} plan={plan} progress={progress} />
     </AbsoluteFill>
   );
 }
@@ -156,27 +157,27 @@ function Fan({position, frame}: {position: [number, number, number]; frame: numb
   </group>;
 }
 
-function UiOverlay({sceneNumber, progress}: {sceneNumber: number; progress: number}) {
+function UiOverlay({sceneNumber, plan, progress}: {sceneNumber: number; plan?: VisualPlan; progress: number}) {
   if (sceneNumber === 1) return <div style={{position: 'absolute', top: '12%', left: '7%', right: '7%', color: palette.cream, fontFamily: 'Georgia, serif', fontSize: 58, fontWeight: 700, textShadow: '0 4px 12px #111'}}>Voice, without<br /><span style={{color: palette.gold}}>the per-minute bill.</span><div style={{width: 330, height: 7, marginTop: 16, background: palette.orange, borderRadius: 4}} /></div>;
-  const titles = ['Run it locally', 'Download it once', 'Clone your voice', 'Design the sound', 'Type and generate', 'Sync captions', 'Get permission'];
-  const title = titles[Math.min(sceneNumber - 2, titles.length - 1)];
+  const title = plan?.heading ?? 'Explain the workflow';
   return <div style={{position: 'absolute', top: '17%', left: '4%', right: '4%', height: '39%', background: 'rgba(31, 29, 36, 0.96)', border: '3px solid #615761', borderRadius: 24, padding: '20px 24px', color: palette.cream, fontFamily: 'Arial, sans-serif', boxSizing: 'border-box'}}>
     <div style={{fontSize: 18, color: palette.orange, fontWeight: 900}}>STEP {Math.min(sceneNumber - 1, 7)}/7</div>
     <div style={{display: 'flex', gap: 8, marginTop: 8}}>{Array.from({length: 7}, (_, i) => <div key={i} style={{height: 7, flex: 1, borderRadius: 5, background: i < sceneNumber - 1 ? palette.orange : '#514A55'}} />)}</div>
     <div style={{fontFamily: 'Georgia, serif', fontSize: 38, fontWeight: 700, marginTop: 18}}>{title}</div>
     <div style={{height: 28, marginTop: 14, background: '#F1EDE5', borderRadius: 6, color: '#68616A', textAlign: 'center', fontSize: 12, paddingTop: 8, boxSizing: 'border-box'}}>VoiceStudio · {title}</div>
-    <UiPanel sceneNumber={sceneNumber} progress={progress} />
+    <UiPanel uiComponent={plan?.uiComponent ?? 'none'} progress={progress} />
   </div>;
 }
 
-function UiPanel({sceneNumber, progress}: {sceneNumber: number; progress: number}) {
+function UiPanel({uiComponent, progress}: {uiComponent: VisualPlan['uiComponent']; progress: number}) {
   const common = {fontFamily: 'Arial, sans-serif', fontSize: 17, color: palette.cream} as const;
-  if (sceneNumber <= 3) return <div style={{...common, marginTop: 34}}><strong>Download local voice models</strong><div style={{height: 34, marginTop: 18, background: '#2C2931', borderRadius: 8, overflow: 'hidden'}}><div style={{width: `${35 + progress * 55}%`, height: '100%', background: palette.orange}} /></div><div style={{color: '#97919A', marginTop: 10}}>Runs on your own computer · first setup only</div></div>;
-  if (sceneNumber === 4) return <div style={{...common, marginTop: 34, color: '#E97D76'}}>RECORDING… 00:10<div style={{display: 'flex', gap: 5, alignItems: 'center', height: 80, marginTop: 18}}>{Array.from({length: 32}, (_, i) => <i key={i} style={{width: 5, height: 15 + Math.abs(Math.sin(i * 2 + progress * 7)) * 48, background: palette.orangeLight, borderRadius: 3}} />)}</div></div>;
-  if (sceneNumber === 5) return <div style={{...common, marginTop: 28}}>{['Accent', 'Age', 'Pitch', 'Emotion', 'Speed'].map((label, i) => <div key={label} style={{marginTop: 10, display: 'flex', alignItems: 'center', gap: 16}}><span style={{width: 70}}>{label}</span><div style={{height: 6, flex: 1, background: '#695B61', borderRadius: 4}}><div style={{width: `${35 + ((i + 1) * 11) % 50}%`, height: '100%', background: palette.orangeLight, borderRadius: 4}} /></div></div>)}</div>;
-  if (sceneNumber === 6) return <div style={{...common, marginTop: 34}}><div style={{padding: 18, borderRadius: 8, background: '#2F2B33'}}>Hey, it&apos;s me. This voice costs zero dollars.</div><WaveformHtml progress={progress} /></div>;
-  if (sceneNumber === 7) return <div style={{...common, marginTop: 34}}><strong>Word timing follows the real audio</strong><WaveformHtml progress={progress} /><div style={{display: 'flex', gap: 10}}>{['VOICE', 'CAPTIONS', 'SCENES'].map((x, i) => <span key={x} style={{padding: '9px 18px', borderRadius: 7, background: i === 0 ? palette.orange : '#51464F', color: i === 0 ? '#281B1B' : palette.cream, fontSize: 13}}>{x}</span>)}</div></div>;
-  return <div style={{marginTop: 28, background: '#F5F1E9', borderRadius: 10, padding: 24, color: '#15151B', textAlign: 'center', fontFamily: 'Arial, sans-serif', fontWeight: 700}}>Use only voices you own or have permission to use.<div style={{marginTop: 24, color: '#327B4C', background: '#DDF2E2', padding: 8, borderRadius: 6, fontSize: 13}}>Your own voice · someone who said yes</div></div>;
+  if (uiComponent === 'download') return <div style={{...common, marginTop: 34}}><strong>Download local voice models</strong><div style={{height: 34, marginTop: 18, background: '#2C2931', borderRadius: 8, overflow: 'hidden'}}><div style={{width: `${35 + progress * 55}%`, height: '100%', background: palette.orange}} /></div><div style={{color: '#97919A', marginTop: 10}}>Runs on your own computer · first setup only</div></div>;
+  if (uiComponent === 'recording') return <div style={{...common, marginTop: 34, color: '#E97D76'}}>RECORDING… 00:10<div style={{display: 'flex', gap: 5, alignItems: 'center', height: 80, marginTop: 18}}>{Array.from({length: 32}, (_, i) => <i key={i} style={{width: 5, height: 15 + Math.abs(Math.sin(i * 2 + progress * 7)) * 48, background: palette.orangeLight, borderRadius: 3}} />)}</div></div>;
+  if (uiComponent === 'voice-design') return <div style={{...common, marginTop: 28}}>{['Accent', 'Age', 'Pitch', 'Emotion', 'Speed'].map((label, i) => <div key={label} style={{marginTop: 10, display: 'flex', alignItems: 'center', gap: 16}}><span style={{width: 70}}>{label}</span><div style={{height: 6, flex: 1, background: '#695B61', borderRadius: 4}}><div style={{width: `${35 + ((i + 1) * 11) % 50}%`, height: '100%', background: palette.orangeLight, borderRadius: 4}} /></div></div>)}</div>;
+  if (uiComponent === 'generate') return <div style={{...common, marginTop: 34}}><div style={{padding: 18, borderRadius: 8, background: '#2F2B33'}}>Hey, it&apos;s me. This voice costs zero dollars.</div><WaveformHtml progress={progress} /></div>;
+  if (uiComponent === 'caption-sync') return <div style={{...common, marginTop: 34}}><strong>Word timing follows the real audio</strong><WaveformHtml progress={progress} /><div style={{display: 'flex', gap: 10}}>{['VOICE', 'CAPTIONS', 'SCENES'].map((x, i) => <span key={x} style={{padding: '9px 18px', borderRadius: 7, background: i === 0 ? palette.orange : '#51464F', color: i === 0 ? '#281B1B' : palette.cream, fontSize: 13}}>{x}</span>)}</div></div>;
+  if (uiComponent === 'permission') return <div style={{marginTop: 28, background: '#F5F1E9', borderRadius: 10, padding: 24, color: '#15151B', textAlign: 'center', fontFamily: 'Arial, sans-serif', fontWeight: 700}}>Use only voices you own or have permission to use.<div style={{marginTop: 24, color: '#327B4C', background: '#DDF2E2', padding: 8, borderRadius: 6, fontSize: 13}}>Your own voice · someone who said yes</div></div>;
+  return <div style={{...common, marginTop: 34}}>The studio explains the idea with the presenter and orb.</div>;
 }
 
 function WaveformHtml({progress}: {progress: number}) {

@@ -12,6 +12,8 @@ The sample project is a 29.38-second stylized 3D voice explainer based on the up
 - Remotion UI overlays and gold cinematic captions.
 - Local Kokoro narration.
 - Local faster-whisper word alignment.
+- Procedural background music and scene-transition whooshes.
+- 48 kHz stereo audio mix with ducked narration and loudness normalization.
 - 1080×1920, 30 FPS H.264 video.
 - AAC stereo audio at 48 kHz.
 - Metadata/audio QA and an SVG contact sheet.
@@ -76,7 +78,13 @@ Generate aligned word timings:
   --model small.en --allow-model-download
 ```
 
-Then render again. `scripts/prepare-render.ts` stages `narration.wav` and consumes the aligned `timing.json`.
+Then create the music/SFX mix:
+
+```bash
+npm run mix:audio
+```
+
+Render again. `scripts/prepare-render.ts` stages `mix.wav` and Remotion uses the mix instead of the raw narration file.
 
 ## Validation commands
 
@@ -116,7 +124,7 @@ docs/PRODUCTION_AUDIT.md             Root-cause audit and remaining limits
 
 - The current 3D kit uses procedural primitives, not GLTF/GLB character assets.
 - Facial animation is limited to deterministic head/body motion; the presenter does not have a facial rig or phoneme-level lip sync.
-- The current sample uses aligned local narration but no background music or scene-specific sound effects.
+- The current sample uses aligned local narration, procedural music, and scene-transition sound effects.
 - QA verifies metadata, duration, resolution, frame rate, and audio presence. Black-frame and caption-bound scans are reported as not implemented when the bundled FFmpeg build lacks the required filters.
 - Scene cache, per-scene regeneration, FastAPI, the dashboard, research, video intelligence, Telegram, and VPS deployment remain future phases.
 

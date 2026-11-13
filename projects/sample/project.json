@@ -5,7 +5,7 @@
   "targetDurationSeconds": 30,
   "style": "voice-studio",
   "voice": { "provider": "estimated", "name": "am_michael", "speed": 1 },
-  "music": { "mode": "none" },
+  "music": { "mode": "procedural" },
   "lines": [
     { "id": "line-01", "text": "Natural voiceovers usually cost money per minute.", "caption": "VOICEOVERS COST *MONEY", "sceneId": "voice-01", "gapSeconds": 0.24 },
     { "id": "line-02", "text": "This workflow runs the model on your own computer.", "caption": "RUN IT *LOCALLY", "sceneId": "voice-02", "gapSeconds": 0.24 },

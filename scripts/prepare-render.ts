@@ -24,6 +24,11 @@ await mkdir(publicDirectory, {recursive: true});
 const renderProps: Record<string, unknown> = {project, timing};
 
 const narrationSource = resolve(projectDirectory, 'data/narration.wav');
+const mixSource = resolve(projectDirectory, 'data/mix.wav');
+if (await exists(mixSource)) {
+  await copyFile(mixSource, resolve(publicDirectory, 'mix.wav'));
+  renderProps.mixPath = `generated/${project.id}/mix.wav`;
+}
 if (await exists(narrationSource)) {
   await copyFile(narrationSource, resolve(publicDirectory, 'narration.wav'));
   renderProps.narrationPath = `generated/${project.id}/narration.wav`;
@@ -44,6 +49,7 @@ console.log(`Prepared render props: ${outputPath}`);
 console.log(`Project: ${project.id}`);
 console.log(`Timing: ${timing.estimated ? 'estimated' : 'aligned'} (${timing.durationSeconds.toFixed(2)}s)`);
 console.log(`Narration: ${renderProps.narrationPath ? 'staged' : 'not present'}`);
+console.log(`Mix: ${renderProps.mixPath ? 'staged' : 'not present'}`);
 
 async function exists(path: string): Promise<boolean> {
   try {

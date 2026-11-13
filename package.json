@@ -10,6 +10,7 @@
     "check": "npm run typecheck && npm test && npm run validate && npm run timing -- projects/sample/project.json",
     "validate": "tsx scripts/validate-project.ts projects/sample/project.json",
     "timing": "tsx scripts/generate-timing.ts",
+    "mix:audio": ".venv/bin/python python/mix.py projects/sample/project.json",
     "studio": "remotion studio src/index.tsx",
     "prepare:render": "tsx scripts/prepare-render.ts",
     "render:draft": "npm run prepare:render && remotion render src/index.tsx UniversalVideoStudio out/draft.mp4 --props=.tmp/render-props.json --gl=swangle --scale=0.5",

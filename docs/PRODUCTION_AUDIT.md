@@ -31,4 +31,4 @@
 
 ## Remaining blockers
 
-A real Kokoro narration render still requires downloading the local Kokoro model/voice files and installing the optional Python dependencies. Until that is done, the 3D sample can be rendered with estimated timing but must not be claimed to contain narration audio. The new QA gate reports that limitation instead of silently treating a video-only MP4 as complete.
+The current sample now has locally generated Kokoro narration, faster-whisper-aligned timing, procedural music/SFX mixing, and a verified AAC stream. The remaining major quality gaps are GLTF/GLB asset import, skeletal/facial animation, and automated black-frame/caption-bound scans. Until those are implemented, the 3D kit should be treated as a deterministic procedural production preset rather than a full asset-driven character system.

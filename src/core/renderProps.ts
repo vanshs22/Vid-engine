@@ -7,6 +7,7 @@ export type RenderProps = {
   timing: Timing;
   narrationPath?: string;
   musicPath?: string;
+  mixPath?: string;
 };
 
 export function normalizeRenderProps(input: unknown, fallback: RenderProps): RenderProps {
@@ -24,6 +25,7 @@ export function normalizeRenderProps(input: unknown, fallback: RenderProps): Ren
     timing,
     narrationPath: getOptionalString(input, 'narrationPath') ?? (project.id === fallback.project.id ? fallback.narrationPath : undefined),
     musicPath: getOptionalString(input, 'musicPath') ?? (project.id === fallback.project.id ? fallback.musicPath : undefined),
+    mixPath: getOptionalString(input, 'mixPath') ?? (project.id === fallback.project.id ? fallback.mixPath : undefined),
   };
 }
 

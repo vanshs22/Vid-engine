@@ -68,3 +68,13 @@ The timing artifact must contain word timings before word-synchronized captions 
 npm run prepare:render
 npm run render:draft
 ```
+
+## Procedural music and effects mix
+
+After narration and timing are available:
+
+```bash
+npm run mix:audio
+```
+
+This creates `projects/sample/data/mix.wav` at 48 kHz stereo. The mix contains Kokoro narration, a restrained procedural music bed, and scene-transition whooshes. Remotion stages the mix automatically when it exists.

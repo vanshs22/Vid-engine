@@ -12,6 +12,17 @@ const VoiceSchema = z.object({
   speed: z.number().positive().default(1),
 });
 
+export const VisualPlanSchema = z.object({
+  purpose: z.string().min(1),
+  subject: z.string().min(1),
+  action: z.string().min(1),
+  uiComponent: z.enum(['none', 'download', 'recording', 'voice-design', 'generate', 'caption-sync', 'permission']),
+  camera: z.enum(['hook-wide', 'ui-push', 'character-close', 'object-close', 'permission-wide']),
+  animationPreset: z.enum(['orb-pulse', 'download-progress', 'record-waveform', 'move-sliders', 'generate-waveform', 'caption-timeline', 'permission-reveal']),
+  stepIndex: z.number().int().nonnegative(),
+  heading: z.string().min(1),
+});
+
 const SceneSchema = z.object({
   id: z.string().min(1),
   lineId: z.string().min(1),
@@ -22,6 +33,7 @@ const SceneSchema = z.object({
   animation: z.array(z.string()).default([]),
   transition: z.enum(['cut', 'fade', 'crossfade']).default('cut'),
   audioCues: z.array(z.object({type: z.string(), atWord: z.string().optional()})).default([]),
+  visualPlan: VisualPlanSchema.optional(),
 });
 
 const LineSchema = z.object({
@@ -64,6 +76,7 @@ export const ProjectSchema = ProjectBaseSchema.superRefine((project, context) =>
 });
 
 export type Project = z.infer<typeof ProjectSchema>;
+export type VisualPlan = z.infer<typeof VisualPlanSchema>;
 export type Line = Project['lines'][number];
 export type Scene = Project['scenes'][number];
 
