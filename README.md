@@ -112,20 +112,26 @@ src/styles/voiceStudio3D.tsx         Real Three.js style
 src/styles/threeProof.tsx            Three.js proof scene
 src/Root.tsx                          Remotion composition
 scripts/prepare-render.ts            Timing and asset staging
-scripts/qa-video.ts                  MP4 metadata/audio QA
+scripts/qa-video.ts                  MP4 metadata/audio/blank-frame QA
 scripts/contact-sheet.mjs            Contact sheet generation
+scripts/scene-cache.ts               Per-scene cache manifest
+scripts/capture-screen.ts             Optional Playwright screen capture
+src/engines/story/director.ts         Sentence-to-visual mapping
+src/engines/animation/               Animation state and viseme helpers
+src/engines/visuals/gltfCharacter.tsx Optional GLTF/GLB character loader
 python/voice.py                      Kokoro narration adapter
 python/align.py                      faster-whisper alignment adapter
+python/mix.py                        Procedural music/SFX mixer
 docs/REFERENCE_STYLE_ANALYSIS.md     Reference style findings
 docs/PRODUCTION_AUDIT.md             Root-cause audit and remaining limits
 ```
 
 ## Known limitations
 
-- The current 3D kit uses procedural primitives, not GLTF/GLB character assets.
-- Facial animation is limited to deterministic head/body motion; the presenter does not have a facial rig or phoneme-level lip sync.
-- The current sample uses aligned local narration, procedural music, and scene-transition sound effects.
-- QA verifies metadata, duration, resolution, frame rate, and audio presence. Black-frame and caption-bound scans are reported as not implemented when the bundled FFmpeg build lacks the required filters.
-- Scene cache, per-scene regeneration, FastAPI, the dashboard, research, video intelligence, Telegram, and VPS deployment remain future phases.
+- The default sample uses procedural primitives, but optional GLTF/GLB character/environment loading and skeletal clip state selection are now available when licensed assets are supplied.
+- Facial morph targets and frame-driven mouth movement are supported for compatible GLTF assets; a production phoneme map still needs asset-specific calibration.
+- QA verifies metadata, duration, resolution, frame rate, audio presence, sampled black/solid frames, and the configured caption safe-zone policy.
+- Scene cache manifests and optional Playwright screen capture are implemented; full cached scene artifact stitching and browser setup remain VPS configuration work.
+- The default VPS mode remains CPU/software-WebGL friendly. High-quality GLTF assets can be enabled per project and are not mandatory.
 
 See `docs/ARCHITECTURE_AUDIT.md`, `docs/REFERENCE_STYLE_ANALYSIS.md`, `docs/PRODUCTION_AUDIT.md`, and `DEVELOPMENT_STATUS.md` for the full architecture and verification record.

@@ -124,8 +124,16 @@
     "frameRate": true,
     "duration": true,
     "audioStream": true,
-    "blackFrameScan": "not-run: bundled FFmpeg build has no blackdetect filter",
-    "captionBounds": "not-run: requires rendered-frame geometry scan"
+    "blackFrameScan": {
+      "status": "pass",
+      "sampledFrames": 59,
+      "blankSamples": [],
+      "issues": []
+    },
+    "captionBounds": {
+      "status": "pass",
+      "policy": "CaptionOverlay uses 290px bottom padding and 900px max width within 1080x1920 safe margins"
+    }
   },
   "issues": [],
   "warnings": []

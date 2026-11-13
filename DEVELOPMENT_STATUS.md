@@ -21,7 +21,11 @@
 - Added metadata/audio QA in `scripts/qa-video.ts`.
 - Added SVG contact-sheet generation in `scripts/contact-sheet.mjs`.
 - Normalized final audio near -14 LUFS and -1 dBTP.
-- Rendered and inspected representative 3D frames and the final contact sheet.
+- Added optional GLTF/GLB loading for user-supplied characters with animation clip selection and morph-target mouth driving.
+- Added reusable animation state and viseme helpers.
+- Added per-scene cache manifests through `scripts/scene-cache.ts`.
+- Added optional Playwright screen capture through `scripts/capture-screen.ts`.
+- Added sampled blank/solid-frame scanning and explicit caption safe-zone policy reporting to media QA.
 
 ## Current verified deliverables
 
@@ -36,8 +40,9 @@
 Passed on 2026-11-13:
 
 - TypeScript validation.
-- 4 test files, 10 tests passed.
+- 5 test files, 12 tests passed.
 - Sample validation and semantic scene direction.
+- Per-scene cache manifest generation.
 - Production dependency audit: 0 vulnerabilities.
 - Python syntax validation for voice, alignment, and mixer scripts.
 - Kokoro narration generation from local model files.
@@ -47,15 +52,14 @@ Passed on 2026-11-13:
 - Final MP4: AAC stereo, 48 kHz audio stream present.
 - Final audio normalization: approximately -14 LUFS / -1 dBTP target.
 - Contact sheet generated at 3-second intervals.
-- QA report passed resolution, frame rate, duration, and audio stream checks.
+- QA report passed resolution, frame rate, duration, audio stream, and sampled blank-frame checks.
 - Manual inspection of hook, semantic UI scenes, middle scene, and permission scene.
 
 ## Known limitations
 
-- The 3D kit uses procedural primitives rather than GLTF/GLB character assets.
-- The presenter has body and gesture motion but no skeletal rig, facial rig, or phoneme-level lip sync.
-- QA reports black-frame and caption-bound scans as not implemented when the bundled FFmpeg build lacks the required filters.
-- Scene cache, per-scene regeneration, FastAPI, dashboard, research, video intelligence, Telegram, and VPS deployment remain future phases.
+- The default 3D kit uses procedural primitives. Optional GLTF/GLB character/environment loading, skeletal clip selection, and morph-target mouth driving are available when licensed assets are supplied.
+- Generic phoneme-to-viseme mapping still needs asset-specific calibration for production facial lip sync.
+- Scene cache manifests and optional screen capture are implemented; full cached scene artifact stitching and browser installation remain deployment configuration work.
 
 ## Next gate
 

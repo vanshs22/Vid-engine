@@ -29,6 +29,7 @@
 - Add output metadata, audio-track, black-frame, and duration checks.
 - Render the same topic at full 1080×1920 output and inspect representative frames.
 
-## Remaining blockers
-
-The current sample now has locally generated Kokoro narration, faster-whisper-aligned timing, procedural music/SFX mixing, and a verified AAC stream. The remaining major quality gaps are GLTF/GLB asset import, skeletal/facial animation, and automated black-frame/caption-bound scans. Until those are implemented, the 3D kit should be treated as a deterministic procedural production preset rather than a full asset-driven character system.
+- GLTF/GLB loading, optional skeletal clip selection, morph-target mouth driving, per-scene cache manifests, and Playwright screen capture are now implemented as optional infrastructure.
+- The default sample still uses procedural geometry and does not ship a third-party model. Asset quality depends on the user-supplied licensed GLTF/GLB.
+- Facial lip-sync timing requires asset-specific morph names and phoneme cues; the generic driver provides a safe fallback but cannot infer every model's rig automatically.
+- Background music/SFX mixing and sampled black-frame QA are now active. Caption-bound QA is currently a safe-zone policy check rather than OCR/vision validation.

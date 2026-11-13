@@ -1,6 +1,7 @@
 import {ThreeCanvas} from '@remotion/three';
 import {AbsoluteFill, interpolate, useCurrentFrame, useVideoConfig} from 'remotion';
 import type {Scene, VisualPlan} from '../types/project';
+import {GltfCharacter} from '../engines/visuals/gltfCharacter';
 
 const palette = {
   wall: '#2B2020',
@@ -31,14 +32,14 @@ export function VoiceStudio3DScene({scene}: {scene: Scene}) {
         <directionalLight castShadow position={[-4, 6, 5]} intensity={2.5} color="#FFD1A3" shadow-mapSize={[1024, 1024]} />
         <pointLight position={[3, 2.5, 2]} intensity={8} distance={8} color="#E9855B" />
         <pointLight position={[-3, 4, 1]} intensity={4} distance={9} color="#6E93FF" />
-        <StudioGeometry frame={frame} sceneNumber={number} progress={progress} />
+        <StudioGeometry frame={frame} sceneNumber={number} progress={progress} characterModelPath={scene.assets?.characterModelPath} />
       </ThreeCanvas>
       <UiOverlay sceneNumber={number} plan={plan} progress={progress} />
     </AbsoluteFill>
   );
 }
 
-function StudioGeometry({frame, sceneNumber, progress}: {frame: number; sceneNumber: number; progress: number}) {
+function StudioGeometry({frame, sceneNumber, progress, characterModelPath}: {frame: number; sceneNumber: number; progress: number; characterModelPath?: string}) {
   const orbPulse = 1 + Math.sin(frame / 11) * 0.035;
   const orbAngle = frame / 28;
   const presenterBob = Math.sin(frame / 26) * 0.035;
@@ -67,7 +68,7 @@ function StudioGeometry({frame, sceneNumber, progress}: {frame: number; sceneNum
     <Laptop position={[-2.3, -0.35, 0.1]} />
     <Microphone position={[0.05, 0.15, 0.5]} />
     <Fan position={[3.0, -0.6, 0.5]} frame={frame} />
-    <Presenter position={[-1.65, -0.85, 0.35]} bob={presenterBob} gesture={gesture} />
+    {characterModelPath ? <GltfCharacter url={characterModelPath} state={sceneNumber === 4 ? 'record' : sceneNumber === 6 ? 'talk' : 'idle'} position={[-1.65, -0.85, 0.35]} scale={1.2} /> : <Presenter position={[-1.65, -0.85, 0.35]} bob={presenterBob} gesture={gesture} />}
     <VoiceOrb position={[1.65, 1.15, 0.45]} pulse={orbPulse} angle={orbAngle} />
     <mesh position={[0, -1.65, 2.5]} rotation={[-Math.PI / 2, 0, 0]}>
       <planeGeometry args={[7, 0.05]} />
