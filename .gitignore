@@ -9,7 +9,9 @@ out/
 !.env.example
 models/
 .venv/
+.venv-agent/
 projects/*/data/
+projects/*/agent-artifacts/
 projects/*/renders/
 public/generated/
 reference/

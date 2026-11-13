@@ -135,3 +135,18 @@ docs/PRODUCTION_AUDIT.md             Root-cause audit and remaining limits
 - The default VPS mode remains CPU/software-WebGL friendly. High-quality GLTF assets can be enabled per project and are not mandatory.
 
 See `docs/ARCHITECTURE_AUDIT.md`, `docs/REFERENCE_STYLE_ANALYSIS.md`, `docs/PRODUCTION_AUDIT.md`, and `DEVELOPMENT_STATUS.md` for the full architecture and verification record.
+
+## Multi-agent production foundation
+
+The new `backend/` package adds a real, local-first Director layer on top of the media engine:
+
+```bash
+python3 -m venv .venv-agent
+. .venv-agent/bin/pip install -e backend
+.venv-agent/bin/python -m backend.app.cli agents
+.venv-agent/bin/python -m backend.app.cli run-mvp --topic "How local voice generation works"
+```
+
+It provides Pydantic contracts, a permission-aware agent registry, SQLite checkpoints, isolated project artifact workspaces, a deterministic 12-agent MVP registry, FastAPI endpoints, and a LangGraph-compatible graph builder. The deterministic local mode does not call an LLM or paid provider. It writes structured artifacts and delegates media work to the existing Remotion/Python/FFmpeg pipeline.
+
+The Reel Editor archive audit is in `docs/REEL_EDITOR_AUDIT.md`. The backend foundation is intentionally additive: it does not replace the working rendering engine.
