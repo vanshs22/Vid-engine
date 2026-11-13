@@ -12,6 +12,7 @@ class AgentContext:
     root: Path
     workspace: Path
     store: SQLiteStore
+    lessons: list[dict]
 
 
 class Agent:

@@ -36,6 +36,11 @@ class SQLiteStore:
         with sqlite3.connect(self.path) as connection:
             connection.execute("INSERT OR REPLACE INTO artifacts(artifact_id,project_id,payload) VALUES(?,?,?)", (artifact.artifact_id, artifact.project_id, artifact.model_dump_json()))
 
+    def load_lessons(self, project_id: str) -> list[dict]:
+        with sqlite3.connect(self.path) as connection:
+            rows = connection.execute("SELECT payload FROM lessons WHERE project_id=? ORDER BY lesson_id", (project_id,)).fetchall()
+        return [json.loads(row[0]) for row in rows]
+
     def save_lesson(self, project_id: str, lesson: dict) -> None:
         with sqlite3.connect(self.path) as connection:
             connection.execute("INSERT INTO lessons(project_id,payload) VALUES(?,?)", (project_id, json.dumps(lesson)))

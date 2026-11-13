@@ -45,3 +45,13 @@ The API exposes `/agents`, `/projects/run`, and `/projects/{project_id}`.
 - `agents/mvp.py`: functional MVP department agents.
 
 The current backend is intentionally deterministic to minimize credits. Provider-backed LLM, web research, browser, and vision tools can be added behind the same artifact contracts.
+
+## Optional capability adapters
+
+- `providers.py`: URL research, OpenAI-compatible LLM, and vision-review interfaces.
+- `editing.py`: raw-footage metadata/audio helpers for Mode B.
+- `memory.py`: SQLite memory interface with a PostgreSQL/pgvector-compatible seam.
+- `jobs.py`: local parallel job queue for multi-project execution.
+- `telegram.py`: explicit, token-gated Telegram adapter.
+
+These adapters fail closed when credentials or providers are absent. The local deterministic workflow remains usable without paid services.

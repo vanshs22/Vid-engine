@@ -5,6 +5,7 @@ from typing import Callable
 
 from .agents.base import AgentContext
 from .agents.mvp import AGENT_CLASSES
+from .learning import LearningSupervisor
 from .models import ProductionState, ProjectRequest, Task, TaskStatus
 from .registry import AgentRegistry
 from .store import SQLiteStore
@@ -35,7 +36,8 @@ class Director:
         state = self.create_state(request)
         workspace = self.root / "projects" / request.project_id / "agent-artifacts"
         workspace.mkdir(parents=True, exist_ok=True)
-        context = AgentContext(root=self.root, workspace=workspace, store=self.store)
+        learner = LearningSupervisor(self.store)
+        context = AgentContext(root=self.root, workspace=workspace, store=self.store, lessons=learner.context(request.project_id))
         for task in state.tasks:
             if task.status == TaskStatus.completed:
                 continue
@@ -57,6 +59,8 @@ class Director:
                 state.artifacts.extend(result.artifacts)
                 for item in result.artifacts:
                     self.store.save_artifact(item)
+                lesson = learner.review(state, result)
+                context.lessons.append(lesson)
                 if result.status == TaskStatus.failed:
                     state.errors.append(result.message)
             except Exception as exc:
