@@ -6,6 +6,7 @@ from pathlib import Path
 
 from .base import Agent, AgentContext
 from ..models import AgentResult, Artifact, ArtifactType, ProductionState, Task, TaskStatus
+from ..providers import OpenAICompatibleProvider, ResearchProvider, VisionReviewProvider
 
 
 def artifact(state: ProductionState, kind: ArtifactType, path: Path, producer: str, **metadata: object) -> Artifact:
@@ -16,16 +17,30 @@ class ResearchAgent(Agent):
     name = "research"
     def run(self, task, state, context):
         path = context.workspace / "research.md"
+        source = None
+        if state.project.reference_path and state.project.reference_path.startswith(('http://', 'https://')):
+            source = ResearchProvider().fetch_url(state.project.reference_path)
+        if source and context.settings.llm_enabled:
+            text = OpenAICompatibleProvider(context.settings).text([{'role': 'system', 'content': 'Summarize factual claims with source URLs. Do not invent facts.'}, {'role': 'user', 'content': json.dumps(source)[:100000]}])
+            path.write_text(f"# Research brief\n\nTopic: {state.project.topic}\n\n{text}\n\nSource: {source['url']}\n")
+            return AgentResult(agent=self.name, status=TaskStatus.completed, artifacts=[artifact(state, ArtifactType.research, path, self.name, provider='llm')])
         path.write_text(f"# Research brief\n\nTopic: {state.project.topic}\n\nLocal MVP mode: claims require human review before publication.\n")
-        return AgentResult(agent=self.name, status=TaskStatus.completed, artifacts=[artifact(state, ArtifactType.research, path, self.name)])
+        return AgentResult(agent=self.name, status=TaskStatus.completed, artifacts=[artifact(state, ArtifactType.research, path, self.name, provider='deterministic')])
 
 
 class ScriptWriterAgent(Agent):
     name = "script_writer"
     def run(self, task, state, context):
         path = context.workspace / "script-brief.md"
-        path.write_text(f"# Script brief\n\nTopic: {state.project.topic}\nDuration target: {state.project.duration_seconds}s\nStyle: {state.project.style}\n\nThe existing sample project remains the approved render input until a script provider is configured.\n")
-        return AgentResult(agent=self.name, status=TaskStatus.completed, artifacts=[artifact(state, ArtifactType.script, path, self.name)])
+        if context.settings.llm_enabled:
+            prompt = f"Write a concise {state.project.duration_seconds}-second vertical explainer script about {state.project.topic}. Use a hook, clear beats, and a conclusion. Return plain text only."
+            text = OpenAICompatibleProvider(context.settings).text([{'role': 'system', 'content': 'You are a professional short-form script writer. Never invent factual claims.'}, {'role': 'user', 'content': prompt}])
+            path.write_text(f"# Approved script draft\n\n{text}\n")
+            provider = 'llm'
+        else:
+            path.write_text(f"# Script brief\n\nTopic: {state.project.topic}\nDuration target: {state.project.duration_seconds}s\nStyle: {state.project.style}\n\nThe existing sample project remains the approved render input until a script provider is configured.\n")
+            provider = 'deterministic'
+        return AgentResult(agent=self.name, status=TaskStatus.completed, artifacts=[artifact(state, ArtifactType.script, path, self.name, provider=provider)])
 
 
 class ScriptCriticAgent(Agent):
@@ -92,7 +107,11 @@ class QualityAgent(Agent):
     def run(self, task, state, context):
         report = context.root / "out/qa-report.json"
         if report.exists():
-            return AgentResult(agent=self.name, status=TaskStatus.completed, artifacts=[artifact(state, ArtifactType.qa_report, report, self.name)])
+            metadata = {}
+            if context.settings.gemini_enabled:
+                review = VisionReviewProvider(context.settings).review([str(context.root / 'out/voice-studio-final.png')], 'Review this rendered video frame for visual defects, composition, and whether the UI matches the narration. Return concise JSON-like feedback.')
+                metadata['vision_review'] = review
+            return AgentResult(agent=self.name, status=TaskStatus.completed, artifacts=[artifact(state, ArtifactType.qa_report, report, self.name, **metadata)])
         return AgentResult(agent=self.name, status=TaskStatus.skipped, message="Run npm run qa:video after rendering")
 
 

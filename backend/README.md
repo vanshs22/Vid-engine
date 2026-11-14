@@ -55,3 +55,19 @@ The current backend is intentionally deterministic to minimize credits. Provider
 - `telegram.py`: explicit, token-gated Telegram adapter.
 
 These adapters fail closed when credentials or providers are absent. The local deterministic workflow remains usable without paid services.
+
+## LLM and Telegram configuration
+
+Optional environment variables:
+
+```bash
+UVS_LLM_API_KEY=...
+UVS_LLM_BASE_URL=https://api.openai.com/v1
+UVS_LLM_MODEL=gpt-4o-mini
+GEMINI_API_KEY=...
+GEMINI_MODEL=gemini-2.0-flash
+TELEGRAM_BOT_TOKEN=...
+DATABASE_URL=postgresql://...
+```
+
+Without provider keys, the Director uses deterministic local artifacts. `TelegramBotService` accepts `/create <topic>`, submits a persistent project job to the local queue, and sends a confirmation. Credentials are never stored in project artifacts.

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from pathlib import Path
+from typing import Any
 
 from ..models import AgentResult, ProductionState, Task, TaskStatus
 from ..store import SQLiteStore
@@ -13,6 +14,7 @@ class AgentContext:
     workspace: Path
     store: SQLiteStore
     lessons: list[dict]
+    settings: Any
 
 
 class Agent:
