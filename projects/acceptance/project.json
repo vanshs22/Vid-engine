@@ -1,0 +1,37 @@
+{
+  "id": "acceptance-local-voice-explainer",
+  "title": "How AI Voice Cloning Works Locally",
+  "format": { "width": 1080, "height": 1920, "fps": 30 },
+  "targetDurationSeconds": 50,
+  "style": "voice-studio-3d",
+  "captionStyle": "word-by-word",
+  "voice": { "provider": "kokoro-onnx", "name": "am_michael", "speed": 0.9 },
+  "music": { "mode": "procedural" },
+  "lines": [
+    { "id": "line-01", "text": "Most voice cloning demos make the technology look like magic.", "caption": "VOICE CLONING LOOKS LIKE *MAGIC", "sceneId": "accept-01", "gapSeconds": 0.3 },
+    { "id": "line-02", "text": "The real workflow is simpler, and it can run on your own computer.", "caption": "RUN IT ON YOUR *COMPUTER", "sceneId": "accept-02", "gapSeconds": 0.3 },
+    { "id": "line-03", "text": "First, download a voice model once instead of paying for every minute.", "caption": "DOWNLOAD IT *ONCE", "sceneId": "accept-03", "gapSeconds": 0.3 },
+    { "id": "line-04", "text": "Then record a clean sample with a real microphone.", "caption": "RECORD A CLEAN *SAMPLE", "sceneId": "accept-04", "gapSeconds": 0.3 },
+    { "id": "line-05", "text": "The model studies the rhythm, pitch, and texture inside that recording.", "caption": "RHYTHM, PITCH, AND *TEXTURE", "sceneId": "accept-05", "gapSeconds": 0.3 },
+    { "id": "line-06", "text": "You can then adjust accent, age, emotion, and speaking speed.", "caption": "ADJUST THE *SOUND", "sceneId": "accept-06", "gapSeconds": 0.3 },
+    { "id": "line-07", "text": "Type a script, and the system turns those words into narration.", "caption": "WORDS BECOME *NARRATION", "sceneId": "accept-07", "gapSeconds": 0.3 },
+    { "id": "line-08", "text": "Whisper can align every spoken word so captions follow the real audio.", "caption": "ALIGN EVERY *WORD", "sceneId": "accept-08", "gapSeconds": 0.3 },
+    { "id": "line-09", "text": "Music, whooshes, clicks, and small impacts make the edit feel alive.", "caption": "MAKE THE EDIT FEEL *ALIVE", "sceneId": "accept-09", "gapSeconds": 0.3 },
+    { "id": "line-10", "text": "The best scenes show the action instead of repeating one generic panel.", "caption": "SHOW THE *ACTION", "sceneId": "accept-10", "gapSeconds": 0.3 },
+    { "id": "line-11", "text": "Use your own voice, or get permission before cloning anyone else.", "caption": "GET *PERMISSION", "sceneId": "accept-11", "gapSeconds": 0.4 }
+  ],
+  "scenes": [
+    { "id": "accept-01", "lineId": "line-01", "visualStyle": "voice-studio-3d", "description": "Voice cloning looks like magic", "environment": "warm recording studio", "camera": { "preset": "hook-wide" }, "animation": ["orb-pulse"], "transition": "cut", "audioCues": [] },
+    { "id": "accept-02", "lineId": "line-02", "visualStyle": "voice-studio-3d", "description": "Run it on your computer", "environment": "warm recording studio", "camera": { "preset": "ui-push" }, "animation": ["download-progress"], "transition": "cut", "audioCues": [] },
+    { "id": "accept-03", "lineId": "line-03", "visualStyle": "voice-studio-3d", "description": "Download it once", "environment": "warm recording studio", "camera": { "preset": "ui-push" }, "animation": ["download-progress"], "transition": "cut", "audioCues": [] },
+    { "id": "accept-04", "lineId": "line-04", "visualStyle": "voice-studio-3d", "description": "Record a clean sample", "environment": "warm recording studio", "camera": { "preset": "character-close" }, "animation": ["record-waveform"], "transition": "cut", "audioCues": [] },
+    { "id": "accept-05", "lineId": "line-05", "visualStyle": "voice-studio-3d", "description": "Study the voice texture", "environment": "warm recording studio", "camera": { "preset": "object-close" }, "animation": ["orb-pulse"], "transition": "cut", "audioCues": [] },
+    { "id": "accept-06", "lineId": "line-06", "visualStyle": "voice-studio-3d", "description": "Adjust the sound", "environment": "warm recording studio", "camera": { "preset": "ui-push" }, "animation": ["move-sliders"], "transition": "cut", "audioCues": [] },
+    { "id": "accept-07", "lineId": "line-07", "visualStyle": "voice-studio-3d", "description": "Words become narration", "environment": "warm recording studio", "camera": { "preset": "ui-push" }, "animation": ["generate-waveform"], "transition": "cut", "audioCues": [] },
+    { "id": "accept-08", "lineId": "line-08", "visualStyle": "voice-studio-3d", "description": "Align every word", "environment": "warm recording studio", "camera": { "preset": "object-close" }, "animation": ["caption-timeline"], "transition": "cut", "audioCues": [] },
+    { "id": "accept-09", "lineId": "line-09", "visualStyle": "voice-studio-3d", "description": "Make the edit feel alive", "environment": "warm recording studio", "camera": { "preset": "wide-payoff" }, "animation": ["orb-pulse"], "transition": "cut", "audioCues": [] },
+    { "id": "accept-10", "lineId": "line-10", "visualStyle": "voice-studio-3d", "description": "Show the action", "environment": "warm recording studio", "camera": { "preset": "character-close" }, "animation": ["point"], "transition": "cut", "audioCues": [] },
+    { "id": "accept-11", "lineId": "line-11", "visualStyle": "voice-studio-3d", "description": "Get permission", "environment": "warm recording studio", "camera": { "preset": "permission-wide" }, "animation": ["permission-reveal"], "transition": "cut", "audioCues": [] }
+  ],
+  "sources": []
+}
