@@ -5,12 +5,12 @@ export function visemeValueAt(cues: VisemeCue[], seconds: number): number {
   return cue?.value ?? 0;
 }
 
-export function applyMouthMorphs(root: any, value: number): void {
+export function applyMouthMorphs(root: any, value: number, aliases: string[] = ['mouthOpen', 'viseme_aa', 'jawOpen', 'mouth_open']): void {
   root.traverse?.((node: any) => {
     const dictionary = node.morphTargetDictionary;
     const influences = node.morphTargetInfluences;
     if (!dictionary || !influences) return;
-    for (const name of ['mouthOpen', 'viseme_aa', 'jawOpen', 'mouth_open']) {
+    for (const name of aliases) {
       const index = dictionary[name];
       if (typeof index === 'number') influences[index] = value;
     }

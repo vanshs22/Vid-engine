@@ -6,6 +6,7 @@ from pathlib import Path
 
 from .models import PageProfile, ProductionMode, ProjectRequest
 from .longform import LongFormEditor
+from .raw_pipeline import RawFootagePipeline
 from .orchestrator import Director
 from .registry import AgentRegistry
 from .workflow import ApprovalWorkflow
@@ -14,6 +15,13 @@ from .workflow import ApprovalWorkflow
 def main() -> None:
     parser = argparse.ArgumentParser(description='Universal Video Studio local agent orchestrator')
     sub = parser.add_subparsers(dest='command', required=True)
+    raw = sub.add_parser('raw-plan')
+    raw.add_argument('source')
+    raw.add_argument('--output', default='out/edit-plan.json')
+    raw.add_argument('--max-silence', type=float, default=0.25)
+    raw_render = sub.add_parser('raw-render')
+    raw_render.add_argument('plan')
+    raw_render.add_argument('--output', default='out/raw-edited.mp4')
     lf = sub.add_parser('longform-plan')
     lf.add_argument('source')
     lf.add_argument('--seconds', type=int, default=30)
@@ -40,6 +48,20 @@ def main() -> None:
     args = parser.parse_args()
     if args.command == 'agents':
         print(json.dumps([item.__dict__ for item in AgentRegistry().list()], indent=2))
+        return
+    if args.command == 'raw-plan':
+        from pathlib import Path
+        pipeline = RawFootagePipeline()
+        plan = pipeline.plan(Path(args.source), args.max_silence)
+        Path(args.output).parent.mkdir(parents=True, exist_ok=True)
+        Path(args.output).write_text(plan.model_dump_json(indent=2) + '\\n')
+        print(plan.model_dump_json(indent=2))
+        return
+    if args.command == 'raw-render':
+        from pathlib import Path
+        plan = __import__('backend.app.raw_pipeline', fromlist=['EditDecisionList']).EditDecisionList.model_validate_json(Path(args.plan).read_text())
+        RawFootagePipeline().render(plan, Path(args.output))
+        print(args.output)
         return
     if args.command == 'longform-plan':
         plan = LongFormEditor().plan(Path(args.source), args.seconds, Path(args.transcript) if args.transcript else None, args.split_screen, args.screencast)
