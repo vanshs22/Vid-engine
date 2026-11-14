@@ -21,7 +21,9 @@
 - Added procedural music and scene-transition whooshes in `python/mix.py`.
 - Wired the mixed audio asset into Remotion render preparation.
 - Added metadata/audio QA in `scripts/qa-video.ts`.
-- Added SVG contact-sheet generation in `scripts/contact-sheet.mjs`.
+- Added Remotion frame-driven transition primitives and semantic transition assignments.
+- Added full scene-range rendering and video-only stitching via `npm run render:scenes`; verified eight scene segments and a stitched artifact.
+- Fixed scene cache manifests to consume aligned timing and recognize reusable rendered artifacts.
 - Normalized final audio near -14 LUFS and -1 dBTP.
 - Added optional GLTF/GLB loading for user-supplied characters with animation clip selection and morph-target mouth driving.
 - Added reusable animation state and viseme helpers.
@@ -54,6 +56,8 @@ Passed on 2026-11-13:
 - Final MP4: AAC stereo, 48 kHz audio stream present.
 - Final audio normalization: approximately -14 LUFS / -1 dBTP target.
 - Contact sheet generated at 3-second intervals.
+- Eight scene-range videos rendered and stitched to a video-only cached artifact.
+- Second scene-cache pass marked all eight rendered scenes reusable.
 - QA report passed resolution, frame rate, duration, audio stream, and sampled blank-frame checks.
 - Agent backend smoke tests passed: registry and SQLite checkpoint creation.
 - Director MVP run completed with isolated agent artifacts and learning lessons.
