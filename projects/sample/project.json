@@ -4,6 +4,7 @@
   "format": { "width": 1080, "height": 1920, "fps": 30 },
   "targetDurationSeconds": 30,
   "style": "voice-studio",
+  "captionStyle": "word-by-word",
   "voice": { "provider": "estimated", "name": "am_michael", "speed": 1 },
   "music": { "mode": "procedural" },
   "lines": [

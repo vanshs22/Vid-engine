@@ -8,15 +8,32 @@ from .models import ProjectRequest
 from .orchestrator import Director
 from .registry import AgentRegistry
 from .jobs import LocalJobQueue
+from .workflow import ApprovalWorkflow
 
 
 def create_app(root: Path = Path('.')) -> FastAPI:
     app = FastAPI(title='Universal Video Studio Agent API', version='0.1.0')
     director = Director(root)
     queue = LocalJobQueue(workers=2)
+    workflow = ApprovalWorkflow(root)
 
-    @app.get('/agents')
-    def agents():
+    @app.post('/workflow/start')
+    def workflow_start(request: ProjectRequest):
+        return workflow.start(request.topic, request.duration_seconds, request.style)
+
+    @app.get('/workflow/{workflow_id}')
+    def workflow_state(workflow_id: str):
+        return workflow.load(workflow_id)
+
+    @app.post('/workflow/{workflow_id}/approve/{stage}')
+    def workflow_approve(workflow_id: str, stage: str, feedback: str | None = None):
+        return workflow.approve(workflow_id, stage, feedback)
+
+    @app.post('/workflow/{workflow_id}/reject/{stage}')
+    def workflow_reject(workflow_id: str, stage: str, feedback: str):
+        return workflow.reject(workflow_id, stage, feedback)
+
+
         return [item.__dict__ for item in AgentRegistry().list()]
 
     @app.post('/jobs/run')

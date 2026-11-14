@@ -54,7 +54,7 @@ function VideoComposition(inputProps: unknown) {
         const range = timingForScene(timing, scene.lineId, fps);
         const line = project.lines.find((candidate) => candidate.id === scene.lineId);
         if (!line) return null;
-        const captionChunks = captionsForLine(line, timing);
+        const captionChunks = captionsForLine(line, timing, project.captionStyle);
         const lineTiming = timing.lines.find((candidate) => candidate.lineId === line.id);
         const directedScene = scene.visualPlan ? scene : {...scene, visualPlan: directScene(line, scene)};
         return (

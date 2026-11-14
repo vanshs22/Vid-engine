@@ -26,6 +26,12 @@ class TaskStatus(str, Enum):
     skipped = "skipped"
 
 
+class ApprovalStatus(str, Enum):
+    pending = "pending"
+    approved = "approved"
+    rejected = "rejected"
+
+
 class ArtifactType(str, Enum):
     research = "research"
     script = "script"
@@ -48,6 +54,7 @@ class ProjectRequest(BaseModel):
     platform: str = "short-form-vertical"
     reference_path: str | None = None
     raw_path: str | None = None
+    simulate: bool = False
 
 
 class Artifact(BaseModel):
@@ -60,6 +67,15 @@ class Artifact(BaseModel):
     status: str = "approved"
     metadata: dict[str, Any] = Field(default_factory=dict)
     created_at: str = Field(default_factory=now_iso)
+
+
+class ApprovalGate(BaseModel):
+    name: str
+    status: ApprovalStatus = ApprovalStatus.pending
+    artifact_ids: list[str] = Field(default_factory=list)
+    reviewer: str | None = None
+    feedback: str | None = None
+    updated_at: str = Field(default_factory=now_iso)
 
 
 class Task(BaseModel):
@@ -91,6 +107,7 @@ class ProductionState(BaseModel):
     stage: str = "created"
     tasks: list[Task] = Field(default_factory=list)
     artifacts: list[Artifact] = Field(default_factory=list)
+    gates: list[ApprovalGate] = Field(default_factory=list)
     errors: list[str] = Field(default_factory=list)
     events: list[dict[str, Any]] = Field(default_factory=list)
     updated_at: str = Field(default_factory=now_iso)

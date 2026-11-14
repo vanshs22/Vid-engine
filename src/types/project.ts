@@ -54,6 +54,7 @@ const ProjectBaseSchema = z.object({
   title: z.string().min(1),
   format: FormatSchema,
   targetDurationSeconds: z.number().positive(),
+  captionStyle: z.enum(['word-by-word', 'phrase', 'cinematic', 'minimal']).default('phrase'),
   style: z.string().min(1),
   voice: VoiceSchema,
   music: MusicSchema,

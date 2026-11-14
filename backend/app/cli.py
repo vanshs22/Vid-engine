@@ -7,11 +7,14 @@ from pathlib import Path
 from .models import ProductionMode, ProjectRequest
 from .orchestrator import Director
 from .registry import AgentRegistry
+from .workflow import ApprovalWorkflow
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(description='Universal Video Studio local agent orchestrator')
     sub = parser.add_subparsers(dest='command', required=True)
+    sim = sub.add_parser('simulate-production')
+    sim.add_argument('--topic', default='How local voice generation works')
     sub.add_parser('agents')
     run = sub.add_parser('run-mvp')
     run.add_argument('--topic', default='How local voice generation works')
@@ -20,6 +23,9 @@ def main() -> None:
     args = parser.parse_args()
     if args.command == 'agents':
         print(json.dumps([item.__dict__ for item in AgentRegistry().list()], indent=2))
+        return
+    if args.command == 'simulate-production':
+        print(json.dumps(ApprovalWorkflow(Path('.')).simulate(args.topic), indent=2))
         return
     request = ProjectRequest(project_id=args.project_id, topic=args.topic, style=args.style, mode=ProductionMode.creation)
     state = Director(Path('.')).run(request, on_event=print)

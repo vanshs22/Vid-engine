@@ -37,9 +37,12 @@ export function parseCaptionChunks(line: Line, words: WordTiming[]): CaptionChun
   });
 }
 
-export function captionsForLine(line: Line, timing: Timing): CaptionChunk[] {
+export function captionsForLine(line: Line, timing: Timing, mode: 'word-by-word' | 'phrase' | 'cinematic' | 'minimal' = 'phrase'): CaptionChunk[] {
   const lineWords = timing.words.filter((word) => word.lineId === line.id);
   const lineTiming = timing.lines.find((candidate) => candidate.lineId === line.id);
+  if (mode === 'word-by-word') {
+    return lineWords.map((word) => ({text: word.text, highlight: word.text, startSeconds: word.startSeconds, endSeconds: word.endSeconds}));
+  }
   return parseCaptionChunks(line, lineWords).map((chunk) => ({
     ...chunk,
     startSeconds: Math.max(lineTiming?.startSeconds ?? chunk.startSeconds, chunk.startSeconds),
