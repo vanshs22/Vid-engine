@@ -150,3 +150,28 @@ python3 -m venv .venv-agent
 It provides Pydantic contracts, a permission-aware agent registry, SQLite checkpoints, isolated project artifact workspaces, a deterministic 12-agent MVP registry, FastAPI endpoints, and a LangGraph-compatible graph builder. The deterministic local mode does not call an LLM or paid provider. It writes structured artifacts and delegates media work to the existing Remotion/Python/FFmpeg pipeline.
 
 The Reel Editor archive audit is in `docs/REEL_EDITOR_AUDIT.md`. The backend foundation is intentionally additive: it does not replace the working rendering engine.
+
+## Real browser screen demonstrations
+
+Add a scene-level `screenRecording` block when a sentence refers to a real website, GitHub repository, dashboard, or application:
+
+```json
+{
+  "screenRecording": {
+    "url": "https://github.com/owner/repo",
+    "actions": [
+      {"type": "wait", "milliseconds": 1000},
+      {"type": "click", "selector": "a[href*=README]"}
+    ],
+    "durationSeconds": 5
+  }
+}
+```
+
+Capture requested screens before rendering:
+
+```bash
+npm run capture:scene-screens -- projects/sample/project.json
+```
+
+`prepare-render` stages captured MP4s into Remotion public assets. If Chromium or the URL is unavailable, the semantic UI fallback remains available and the capture error is reported instead of being presented as a real screenshot.

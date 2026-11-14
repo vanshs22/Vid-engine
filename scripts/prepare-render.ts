@@ -21,7 +21,17 @@ if (issues.length > 0) {
 
 const publicDirectory = resolve('public/generated', project.id);
 await mkdir(publicDirectory, {recursive: true});
-const renderProps: Record<string, unknown> = {project, timing};
+const renderProject = structuredClone(project);
+for (const scene of renderProject.scenes) {
+  if (!scene.screenRecording) continue;
+  const source = resolve(projectDirectory, scene.screenRecording.assetPath ?? `data/screen-recordings/${scene.id}.mp4`);
+  if (await exists(source)) {
+    const destination = resolve(publicDirectory, `${scene.id}-screen.mp4`);
+    await copyFile(source, destination);
+    scene.screenRecording.assetPath = `generated/${project.id}/${scene.id}-screen.mp4`;
+  }
+}
+const renderProps: Record<string, unknown> = {project: renderProject, timing};
 
 const narrationSource = resolve(projectDirectory, 'data/narration.wav');
 const mixSource = resolve(projectDirectory, 'data/mix.wav');

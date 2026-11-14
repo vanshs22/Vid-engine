@@ -16,9 +16,9 @@ export const VisualPlanSchema = z.object({
   purpose: z.string().min(1),
   subject: z.string().min(1),
   action: z.string().min(1),
-  uiComponent: z.enum(['none', 'download', 'recording', 'voice-design', 'generate', 'caption-sync', 'permission']),
+  uiComponent: z.enum(['none', 'download', 'recording', 'voice-design', 'generate', 'caption-sync', 'permission', 'screen-recording']),
   camera: z.enum(['hook-wide', 'ui-push', 'character-close', 'object-close', 'permission-wide']),
-  animationPreset: z.enum(['orb-pulse', 'download-progress', 'record-waveform', 'move-sliders', 'generate-waveform', 'caption-timeline', 'permission-reveal']),
+  animationPreset: z.enum(['orb-pulse', 'download-progress', 'record-waveform', 'move-sliders', 'generate-waveform', 'caption-timeline', 'permission-reveal', 'screen-recording']),
   stepIndex: z.number().int().nonnegative(),
   heading: z.string().min(1),
 });
@@ -33,6 +33,12 @@ const SceneSchema = z.object({
   animation: z.array(z.string()).default([]),
   transition: z.enum(['cut', 'fade', 'crossfade', 'flash', 'slide', 'zoom']).default('cut'),
   audioCues: z.array(z.object({type: z.string(), atWord: z.string().optional()})).default([]),
+  screenRecording: z.object({
+    url: z.string().url(),
+    assetPath: z.string().min(1).optional(),
+    actions: z.array(z.object({type: z.enum(['click', 'fill', 'press', 'wait']), selector: z.string().optional(), value: z.string().optional(), key: z.string().optional(), milliseconds: z.number().int().positive().optional()})).default([]),
+    durationSeconds: z.number().positive().default(5),
+  }).optional(),
   assets: z.object({characterModelPath: z.string().min(1).optional(), environmentModelPath: z.string().min(1).optional()}).optional(),
   visualPlan: VisualPlanSchema.optional(),
 });

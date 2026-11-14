@@ -15,6 +15,7 @@
     "render:scenes": "npm run prepare:render && tsx scripts/render-scenes.ts projects/sample/project.json",
     "stitch:scenes": "tsx scripts/stitch-scenes.ts projects/sample/project.json",
     "capture:screen": "tsx scripts/capture-screen.ts",
+    "capture:scene-screens": "tsx scripts/capture-scene-screens.ts",
     "studio": "remotion studio src/index.tsx",
     "prepare:render": "tsx scripts/prepare-render.ts",
     "render:draft": "npm run prepare:render && remotion render src/index.tsx UniversalVideoStudio out/draft.mp4 --props=.tmp/render-props.json --gl=swangle --scale=0.5",

@@ -8,6 +8,7 @@ import type {Line, Scene, VisualPlan} from '../../types/project';
 export function directScene(line: Line, scene: Scene): VisualPlan {
   const text = line.text.toLowerCase();
   const stepIndex = scene.id.match(/\d+/) ? Math.max(0, Number(scene.id.match(/\d+/)![0]) - 1) : 0;
+  if (/(github|website|web page|browser|dashboard|repo)/.test(text)) return plan('Show the real referenced interface', 'website or application', 'navigate and demonstrate the page', 'screen-recording', 'ui-push', 'screen-recording', stepIndex, 'Open the real screen');
   if (/(download|install|model)/.test(text)) return plan('Show a local download workflow', 'voice model', 'download the model', 'download', 'ui-push', 'download-progress', stepIndex, 'Download it once');
   if (/(record|sample|microphone)/.test(text)) return plan('Show a recording workflow', 'voice sample', 'record a short sample', 'recording', 'character-close', 'record-waveform', stepIndex, 'Clone your voice');
   if (/(accent|age|pitch|emotion|speed|design)/.test(text)) return plan('Show voice controls being tuned', 'voice settings', 'adjust voice controls', 'voice-design', 'ui-push', 'move-sliders', stepIndex, 'Design the sound');

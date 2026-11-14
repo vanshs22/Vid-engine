@@ -1,5 +1,5 @@
 import {ThreeCanvas} from '@remotion/three';
-import {AbsoluteFill, interpolate, useCurrentFrame, useVideoConfig} from 'remotion';
+import {AbsoluteFill, interpolate, staticFile, useCurrentFrame, useVideoConfig} from 'remotion';
 import type {Scene, VisualPlan} from '../types/project';
 import {GltfCharacter} from '../engines/visuals/gltfCharacter';
 
@@ -34,7 +34,7 @@ export function VoiceStudio3DScene({scene}: {scene: Scene}) {
         <pointLight position={[-3, 4, 1]} intensity={4} distance={9} color="#6E93FF" />
         <StudioGeometry frame={frame} sceneNumber={number} progress={progress} characterModelPath={scene.assets?.characterModelPath} />
       </ThreeCanvas>
-      <UiOverlay sceneNumber={number} plan={plan} progress={progress} />
+      <UiOverlay sceneNumber={number} plan={plan} screenRecording={scene.screenRecording} progress={progress} />
     </AbsoluteFill>
   );
 }
@@ -158,19 +158,20 @@ function Fan({position, frame}: {position: [number, number, number]; frame: numb
   </group>;
 }
 
-function UiOverlay({sceneNumber, plan, progress}: {sceneNumber: number; plan?: VisualPlan; progress: number}) {
+function UiOverlay({sceneNumber, plan, screenRecording, progress}: {sceneNumber: number; plan?: VisualPlan; screenRecording?: {assetPath?: string}; progress: number}) {
   if (sceneNumber === 1) return <div style={{position: 'absolute', top: '12%', left: '7%', right: '7%', color: palette.cream, fontFamily: 'Georgia, serif', fontSize: 58, fontWeight: 700, textShadow: '0 4px 12px #111'}}>Voice, without<br /><span style={{color: palette.gold}}>the per-minute bill.</span><div style={{width: 330, height: 7, marginTop: 16, background: palette.orange, borderRadius: 4}} /></div>;
   const title = plan?.heading ?? 'Explain the workflow';
   return <div style={{position: 'absolute', top: '12%', left: '3%', right: '3%', height: '30%', background: '#17161B', border: '3px solid #6D626A', borderRadius: 22, padding: '18px 22px', color: '#202027', fontFamily: 'Arial, sans-serif', boxSizing: 'border-box', boxShadow: '0 14px 28px #0008', overflow: 'hidden'}}>
     <div style={{display: 'flex', justifyContent: 'space-between', color: palette.orange, fontSize: 16, fontWeight: 900}}>STEP {Math.min(sceneNumber - 1, 7)}/7 <span style={{color: '#B6AEB4'}}>VoiceStudio · {title}</span></div>
     <div style={{display: 'flex', gap: 6, marginTop: 8}}>{Array.from({length: 7}, (_, i) => <div key={i} style={{height: 6, flex: 1, borderRadius: 5, background: i < sceneNumber - 1 ? palette.orange : '#514A55'}} />)}</div>
     <div style={{height: 30, marginTop: 14, background: '#F2EFE8', borderRadius: 6, color: '#777078', textAlign: 'center', fontSize: 11, paddingTop: 9, boxSizing: 'border-box'}}>● ● ● &nbsp; VoiceStudio / {title}</div>
-    <div style={{marginTop: 0, background: '#FAFAF7', borderRadius: '0 0 10px 10px', minHeight: 360, padding: 22}}><div style={{fontFamily: 'Georgia, serif', color: '#1E1D24', fontSize: 30, fontWeight: 700, marginBottom: 16}}>{title}</div><UiPanel uiComponent={plan?.uiComponent ?? 'none'} progress={progress} /></div>
+    <div style={{marginTop: 0, background: '#FAFAF7', borderRadius: '0 0 10px 10px', minHeight: 360, padding: 22}}><div style={{fontFamily: 'Georgia, serif', color: '#1E1D24', fontSize: 30, fontWeight: 700, marginBottom: 16}}>{title}</div><UiPanel uiComponent={plan?.uiComponent ?? 'none'} screenRecording={screenRecording} progress={progress} /></div>
   </div>;
 }
 
-function UiPanel({uiComponent, progress}: {uiComponent: VisualPlan['uiComponent']; progress: number}) {
+function UiPanel({uiComponent, screenRecording, progress}: {uiComponent: VisualPlan['uiComponent']; screenRecording?: {assetPath?: string}; progress: number}) {
   const dark = {fontFamily: 'Arial, sans-serif', fontSize: 15, color: '#24232A'} as const;
+  if (uiComponent === 'screen-recording') return <div style={{...dark, padding: 0, overflow: 'hidden', borderRadius: 9, background: '#111'}}>{screenRecording?.assetPath ? <video src={staticFile(screenRecording.assetPath)} autoPlay muted loop playsInline style={{display: 'block', width: '100%', height: 250, objectFit: 'cover'}} /> : <div style={{height: 250, display: 'grid', placeItems: 'center', color: '#777'}}>Screen capture not staged</div>}</div>;
   if (uiComponent === 'download') return <div style={dark}><div style={{display: 'flex', justifyContent: 'space-between'}}><strong>Download voice model</strong><span style={{color: '#37845A'}}>Verified source</span></div><div style={{height: 28, marginTop: 18, background: '#E8E5DE', borderRadius: 8, overflow: 'hidden'}}><div style={{width: `${35 + progress * 55}%`, height: '100%', background: palette.orange}} /></div><div style={{display: 'flex', justifyContent: 'space-between', marginTop: 9, color: '#777078'}}><span>kokoro-v1.0.onnx</span><span>{Math.round(35 + progress * 55)}%</span></div></div>;
   if (uiComponent === 'recording') return <div style={{...dark, background: '#24232A', color: '#F5E9D1', borderRadius: 9, padding: 18}}><strong style={{color: '#E97D76'}}>Recording your voice · 00:10</strong><WaveformHtml progress={progress} /><div style={{margin: '0 auto', width: 38, height: 38, borderRadius: 20, background: '#E66A65'}} /></div>;
   if (uiComponent === 'voice-design') return <div style={dark}>{['Accent', 'Age', 'Pitch', 'Emotion', 'Speed'].map((label, i) => <div key={label} style={{marginTop: 9, display: 'flex', alignItems: 'center', gap: 12}}><span style={{width: 62}}>{label}</span><div style={{height: 6, flex: 1, background: '#CCC8C0', borderRadius: 4}}><div style={{width: `${35 + ((i + 1) * 11) % 50}%`, height: '100%', background: palette.orange, borderRadius: 4}} /></div></div>)}</div>;
