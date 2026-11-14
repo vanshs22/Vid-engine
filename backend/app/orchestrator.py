@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from concurrent.futures import ThreadPoolExecutor
+import os
 from pathlib import Path
 from typing import Any, Callable
 
@@ -11,8 +12,9 @@ from .learning import LearningSupervisor
 from .models import AgentResult, ProductionState, ProjectRequest, Task, TaskStatus
 from .registry import AgentRegistry
 from .store import SQLiteStore
+from .postgres_store import PostgresStore
 
-MVP_ORDER = ["research", "script_writer", "script_critic", "prompt_designer", "storyboard", "visual_production", "voice", "alignment", "editor", "quality", "learning"]
+MVP_ORDER = ["research", "script_writer", "script_critic", "prompt_designer", "storyboard", "visual_production", "voice", "alignment", "raw_editor", "editor", "quality", "learning"]
 DEPENDENCIES = {
     "script_writer": ["research"],
     "script_critic": ["script_writer"],
@@ -20,7 +22,7 @@ DEPENDENCIES = {
     "storyboard": ["script_critic"],
     "visual_production": ["prompt_designer", "storyboard"],
     "alignment": ["voice"],
-    "editor": ["visual_production", "alignment"],
+    "editor": ["visual_production", "alignment", "raw_editor"],
     "quality": ["editor"],
     "learning": ["quality"],
 }
@@ -30,7 +32,7 @@ class Director:
     def __init__(self, root: Path):
         self.root = root
         self.registry = AgentRegistry()
-        self.store = SQLiteStore(root / ".cache/agent-state.sqlite3")
+        self.store = PostgresStore() if os.environ.get('DATABASE_URL') else SQLiteStore(root / ".cache/agent-state.sqlite3")
         self.config = ProviderConfig()
 
     def create_state(self, request: ProjectRequest) -> ProductionState:

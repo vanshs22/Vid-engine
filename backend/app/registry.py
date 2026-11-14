@@ -22,6 +22,7 @@ MVP_AGENTS: tuple[AgentDefinition, ...] = (
     AgentDefinition("visual_production", "production", "Connect scene plans to the existing Remotion/Three.js renderer", ("terminal", "remotion", "threejs"), ("render:write",)),
     AgentDefinition("voice", "audio", "Run optional local Kokoro narration and cache it", ("terminal", "kokoro"), ("audio:write",)),
     AgentDefinition("alignment", "audio", "Align narration with local faster-whisper", ("terminal", "whisper"), ("timing:write",)),
+    AgentDefinition("raw_editor", "editing", "Probe raw footage, create an edit decision list, extract audio and produce a safe local baseline", ("terminal", "ffmpeg", "ffprobe"), ("raw:read", "edit:write")),
     AgentDefinition("editor", "editing", "Run preparation, mix, render and contact-sheet tools", ("terminal", "ffmpeg", "remotion"), ("render:write",)),
     AgentDefinition("quality", "quality", "Run media metadata, audio and sampled-frame QA", ("terminal", "ffprobe", "opencv"), ("qa:read",)),
     AgentDefinition("learning", "learning", "Record approved lessons and failures without mutating code", ("sqlite",), ("memory:write",)),

@@ -7,6 +7,7 @@ from pathlib import Path
 from .base import Agent, AgentContext
 from ..models import AgentResult, Artifact, ArtifactType, ProductionState, Task, TaskStatus
 from ..providers import OpenAICompatibleProvider, ResearchProvider, VisionReviewProvider
+from ..editing import RawFootageEditor
 
 
 def artifact(state: ProductionState, kind: ArtifactType, path: Path, producer: str, **metadata: object) -> Artifact:
@@ -93,6 +94,22 @@ class AlignmentAgent(Agent):
         return AgentResult(agent=self.name, status=TaskStatus.skipped, message="Timing artifact is not present")
 
 
+class RawEditingAgent(Agent):
+    name = "raw_editor"
+    def run(self, task, state, context):
+        if not state.project.raw_path:
+            return AgentResult(agent=self.name, status=TaskStatus.skipped, message="No raw footage supplied")
+        source = Path(state.project.raw_path).resolve()
+        if not source.exists(): return AgentResult(agent=self.name, status=TaskStatus.failed, message=f"Raw footage not found: {source}")
+        editor = RawFootageEditor()
+        plan = editor.edit_plan(source)
+        plan_path = context.workspace / 'edit-plan.json'
+        plan_path.write_text(json.dumps(plan, indent=2) + '\\n')
+        audio_path = context.workspace / 'audio.wav'
+        editor.extract_audio(source, audio_path)
+        return AgentResult(agent=self.name, status=TaskStatus.completed, artifacts=[artifact(state, ArtifactType.storyboard, plan_path, self.name), artifact(state, ArtifactType.audio, audio_path, self.name)])
+
+
 class EditorAgent(Agent):
     name = "editor"
     def run(self, task, state, context):
@@ -123,4 +140,4 @@ class LearningAgent(Agent):
         return self.complete("Lesson recorded as a proposal")
 
 
-AGENT_CLASSES = {cls.name: cls for cls in [ResearchAgent, ScriptWriterAgent, ScriptCriticAgent, PromptDesignerAgent, StoryboardAgent, VisualProductionAgent, VoiceAgent, AlignmentAgent, EditorAgent, QualityAgent, LearningAgent]}
+AGENT_CLASSES = {cls.name: cls for cls in [ResearchAgent, ScriptWriterAgent, ScriptCriticAgent, PromptDesignerAgent, StoryboardAgent, VisualProductionAgent, VoiceAgent, AlignmentAgent, RawEditingAgent, EditorAgent, QualityAgent, LearningAgent]}
