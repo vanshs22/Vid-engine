@@ -1,5 +1,6 @@
 import {AbsoluteFill, interpolate, useCurrentFrame, useVideoConfig} from 'remotion';
 import type {Scene} from '../types/project';
+import {STICKMAN_STYLE_PROFILE} from './stickmanProfile';
 
 const INK = '#1E2430';
 const PAPER = '#F8F4EA';
@@ -16,6 +17,7 @@ export function StickStoryScene({scene}: {scene: Scene}) {
   const progress = interpolate(frame, [0, 18], [0, 1], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'});
   const beat = 1 + Math.sin(seconds * 7) * 0.025;
   const sceneNumber = Number(scene.id.replace(/\D/g, '')) || 1;
+  const beatName = STICKMAN_STYLE_PROFILE.storyBeats[Math.min(sceneNumber - 1, STICKMAN_STYLE_PROFILE.storyBeats.length - 1)];
   const visual = sceneNumber === 1 ? <BusStop progress={progress} />
     : sceneNumber === 2 ? <LostKeys progress={progress} />
       : sceneNumber === 3 ? <SearchMontage progress={progress} />
@@ -29,7 +31,7 @@ export function StickStoryScene({scene}: {scene: Scene}) {
         <rect width="1080" height="1920" fill={PAPER} />
         <path d="M0 260H1080M0 520H1080M0 780H1080M0 1040H1080M0 1300H1080M0 1560H1080" stroke="#E9E1D4" strokeWidth="2" />
         <path d="M180 0V1920M440 0V1920M700 0V1920M960 0V1920" stroke="#EFE8DD" strokeWidth="2" />
-        <text x="88" y="150" fill={INK} fontFamily="Arial, sans-serif" fontSize="34" fontWeight="800" letterSpacing="5">STICK STORY · {String(sceneNumber).padStart(2, '0')}</text>
+        <text x="88" y="150" fill={INK} fontFamily="Arial, sans-serif" fontSize="34" fontWeight="800" letterSpacing="5">STICK STORY · {String(sceneNumber).padStart(2, '0')} · {beatName.toUpperCase()}</text>
         <text x="88" y="245" fill={INK} fontFamily="Arial, sans-serif" fontSize="76" fontWeight="900">{scene.description}</text>
         <line x1="88" y1="290" x2="992" y2="290" stroke={BLUE} strokeWidth="8" strokeLinecap="round" />
         {visual}

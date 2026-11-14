@@ -9,6 +9,7 @@ from ..models import AgentResult, Artifact, ArtifactType, ProductionState, Task,
 from ..agent_reach import AgentReachAdapter
 from ..providers import LLMRouter, ResearchProvider, VisionReviewProvider
 from ..editing import RawFootageEditor
+from ..longform import LongFormEditor
 
 
 def artifact(state: ProductionState, kind: ArtifactType, path: Path, producer: str, **metadata: object) -> Artifact:
@@ -114,6 +115,19 @@ class AlignmentAgent(Agent):
         return AgentResult(agent=self.name, status=TaskStatus.skipped, message="Timing artifact is not present")
 
 
+class LongFormEditorAgent(Agent):
+    name = "longform_editor"
+    def run(self, task, state, context):
+        if not state.project.raw_path:
+            return AgentResult(agent=self.name, status=TaskStatus.skipped, message="No long-form source supplied")
+        source = Path(state.project.raw_path).resolve()
+        if not source.exists(): return AgentResult(agent=self.name, status=TaskStatus.failed, message=f"Long-form source not found: {source}")
+        plan = LongFormEditor().plan(source, min(60, max(15, state.project.duration_seconds)))
+        path = context.workspace / 'short-candidates.json'
+        path.write_text(plan.model_dump_json(indent=2) + '\\n')
+        return AgentResult(agent=self.name, status=TaskStatus.completed, artifacts=[artifact(state, ArtifactType.storyboard, path, self.name, candidates=len(plan.candidates))])
+
+
 class RawEditingAgent(Agent):
     name = "raw_editor"
     def run(self, task, state, context):
@@ -160,4 +174,4 @@ class LearningAgent(Agent):
         return self.complete("Lesson recorded as a proposal")
 
 
-AGENT_CLASSES = {cls.name: cls for cls in [ResearchAgent, TrendResearchAgent, ScriptWriterAgent, ScriptCriticAgent, PromptDesignerAgent, StoryboardAgent, VisualProductionAgent, VoiceAgent, AlignmentAgent, RawEditingAgent, EditorAgent, QualityAgent, LearningAgent]}
+AGENT_CLASSES = {cls.name: cls for cls in [ResearchAgent, TrendResearchAgent, ScriptWriterAgent, ScriptCriticAgent, PromptDesignerAgent, StoryboardAgent, VisualProductionAgent, VoiceAgent, AlignmentAgent, LongFormEditorAgent, RawEditingAgent, EditorAgent, QualityAgent, LearningAgent]}

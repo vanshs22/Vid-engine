@@ -5,6 +5,7 @@ import json
 from pathlib import Path
 
 from .models import PageProfile, ProductionMode, ProjectRequest
+from .longform import LongFormEditor
 from .orchestrator import Director
 from .registry import AgentRegistry
 from .workflow import ApprovalWorkflow
@@ -13,6 +14,12 @@ from .workflow import ApprovalWorkflow
 def main() -> None:
     parser = argparse.ArgumentParser(description='Universal Video Studio local agent orchestrator')
     sub = parser.add_subparsers(dest='command', required=True)
+    lf = sub.add_parser('longform-plan')
+    lf.add_argument('source')
+    lf.add_argument('--seconds', type=int, default=30)
+    lf.add_argument('--transcript')
+    lf.add_argument('--split-screen', action='store_true')
+    lf.add_argument('--screencast', action='store_true')
     page_save = sub.add_parser('page-save')
     page_save.add_argument('--page-id', required=True)
     page_save.add_argument('--style', default='voice-studio-3d')
@@ -33,6 +40,10 @@ def main() -> None:
     args = parser.parse_args()
     if args.command == 'agents':
         print(json.dumps([item.__dict__ for item in AgentRegistry().list()], indent=2))
+        return
+    if args.command == 'longform-plan':
+        plan = LongFormEditor().plan(Path(args.source), args.seconds, Path(args.transcript) if args.transcript else None, args.split_screen, args.screencast)
+        print(plan.model_dump_json(indent=2))
         return
     if args.command == 'page-save':
         from .orchestrator import Director

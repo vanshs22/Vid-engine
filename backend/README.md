@@ -96,3 +96,13 @@ agent-reach youtube search "your niche topic"
 ```
 
 Set `trend_research=true` in the project request. The `trend_research` agent queries YouTube, Twitter/X, Reddit, Instagram, and TikTok when those channels are available in Agent-Reach; unsupported channels are recorded as non-blocking failures and do not stop production.
+
+## Long-form to shorts
+
+Plan candidate clips from a long-form source:
+
+```bash
+.venv-agent/bin/python -m backend.app.cli longform-plan raw/podcast.mp4 --seconds 30 --split-screen
+```
+
+The planner supports deterministic windows, optional word transcript input, hook scoring, and layout modes: `TRACK`, `GENERAL`, `SPLIT`, and `SCREENCAST`. It is inspired by OpenShorts while keeping CPU fallback and not requiring Gemini.

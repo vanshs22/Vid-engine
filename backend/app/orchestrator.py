@@ -14,7 +14,7 @@ from .registry import AgentRegistry
 from .store import SQLiteStore
 from .postgres_store import PostgresStore
 
-MVP_ORDER = ["research", "trend_research", "script_writer", "script_critic", "prompt_designer", "storyboard", "visual_production", "voice", "alignment", "raw_editor", "editor", "quality", "learning"]
+MVP_ORDER = ["research", "trend_research", "script_writer", "script_critic", "prompt_designer", "storyboard", "visual_production", "voice", "alignment", "longform_editor", "raw_editor", "editor", "quality", "learning"]
 DEPENDENCIES = {
     "script_writer": ["research", "trend_research"],
     "script_critic": ["script_writer"],
@@ -22,7 +22,8 @@ DEPENDENCIES = {
     "storyboard": ["script_critic"],
     "visual_production": ["prompt_designer", "storyboard"],
     "alignment": ["voice"],
-    "editor": ["visual_production", "alignment", "raw_editor"],
+    "longform_editor": ["alignment"],
+    "editor": ["visual_production", "alignment", "raw_editor", "longform_editor"],
     "quality": ["editor"],
     "learning": ["quality"],
 }
