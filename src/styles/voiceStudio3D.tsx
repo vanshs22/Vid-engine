@@ -20,30 +20,35 @@ export function VoiceStudio3DScene({scene}: {scene: Scene}) {
   const {width, height} = useVideoConfig();
   const plan = scene.visualPlan;
   const number = (plan?.stepIndex ?? (Number(scene.id.replace(/\D/g, '')) || 1) - 1) + 1;
+  const shotType = plan?.shotType ?? (number === 1 ? 'hook-wide' : 'ui-demo');
   const progress = interpolate(frame, [0, 18], [0, 1], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'});
-  const cameraX = Math.sin(frame / 180) * 0.18;
-  const cameraZ = 11 - interpolate(frame, [0, 90], [0, 0.5], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'});
+  const cameraX = shotType === 'character-close' || shotType === 'reaction' ? -1.1 + Math.sin(frame / 180) * 0.08 : shotType === 'object-close' ? 1.1 + Math.sin(frame / 160) * 0.08 : Math.sin(frame / 180) * 0.18;
+  const cameraY = shotType === 'character-close' || shotType === 'reaction' ? 1.35 : 1.4;
+  const cameraZ = shotType === 'hook-wide' || shotType === 'permission-wide' ? 11 - interpolate(frame, [0, 90], [0, 0.5], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'}) : 6.8 - interpolate(frame, [0, 90], [0, 0.35], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'});
+  const cameraFov = shotType === 'character-close' || shotType === 'object-close' || shotType === 'reaction' ? 48 : 45;
 
   return (
     <AbsoluteFill style={{backgroundColor: palette.floor}}>
-      <ThreeCanvas width={width} height={height} camera={{fov: 45, position: [cameraX, 1.4, cameraZ]}} shadows style={{backgroundColor: palette.wall}}>
+      <ThreeCanvas width={width} height={height} camera={{fov: cameraFov, position: [cameraX, cameraY, cameraZ]}} shadows style={{backgroundColor: palette.wall}}>
         <color attach="background" args={[palette.wall]} />
         <ambientLight intensity={0.42} color="#FFD9BD" />
         <directionalLight castShadow position={[-4, 6, 5]} intensity={2.5} color="#FFD1A3" shadow-mapSize={[1024, 1024]} />
         <pointLight position={[3, 2.5, 2]} intensity={8} distance={8} color="#E9855B" />
         <pointLight position={[-3, 4, 1]} intensity={4} distance={9} color="#6E93FF" />
-        <StudioGeometry frame={frame} sceneNumber={number} progress={progress} characterModelPath={scene.assets?.characterModelPath} />
+        <StudioGeometry frame={frame} sceneNumber={number} shotType={shotType} progress={progress} characterModelPath={scene.assets?.characterModelPath} />
       </ThreeCanvas>
       <UiOverlay sceneNumber={number} plan={plan} screenRecording={scene.screenRecording} progress={progress} />
     </AbsoluteFill>
   );
 }
 
-function StudioGeometry({frame, sceneNumber, progress, characterModelPath}: {frame: number; sceneNumber: number; progress: number; characterModelPath?: string}) {
+function StudioGeometry({frame, sceneNumber, shotType, progress, characterModelPath}: {frame: number; sceneNumber: number; shotType: string; progress: number; characterModelPath?: string}) {
   const orbPulse = 1 + Math.sin(frame / 11) * 0.035;
   const orbAngle = frame / 28;
   const presenterBob = Math.sin(frame / 26) * 0.035;
   const gesture = sceneNumber === 4 ? Math.sin(frame / 8) * 0.25 : sceneNumber === 7 ? Math.sin(frame / 7) * 0.12 : 0;
+  const characterPosition: [number, number, number] = shotType === 'character-close' || shotType === 'reaction' ? [-0.65, -0.55, 0.35] : [-1.45, -1.18, 0.35];
+  const orbPosition: [number, number, number] = shotType === 'object-close' ? [0.6, 0.95, 0.4] : [1.65, 1.15, 0.45];
   return <>
     <mesh receiveShadow position={[0, -1.7, 0]} rotation={[-Math.PI / 2, 0, 0]}>
       <planeGeometry args={[14, 14]} />
@@ -68,8 +73,8 @@ function StudioGeometry({frame, sceneNumber, progress, characterModelPath}: {fra
     <Laptop position={[-2.3, -0.35, 0.1]} />
     <Microphone position={[0.05, 0.15, 0.5]} />
     <Fan position={[3.0, -0.6, 0.5]} frame={frame} />
-    {characterModelPath ? <GltfCharacter url={characterModelPath} state={sceneNumber === 4 ? 'record' : sceneNumber === 6 ? 'talk' : 'idle'} position={[-1.45, -1.18, 0.35]} scale={0.62} /> : <Presenter position={[-1.65, -0.85, 0.35]} bob={presenterBob} gesture={gesture} />}
-    <VoiceOrb position={[1.65, 1.15, 0.45]} pulse={orbPulse} angle={orbAngle} />
+    {characterModelPath ? <GltfCharacter url={characterModelPath} state={sceneNumber === 4 ? 'record' : sceneNumber === 6 ? 'talk' : 'idle'} position={characterPosition} scale={0.62} /> : <Presenter position={characterPosition} bob={presenterBob} gesture={gesture} />}
+    <VoiceOrb position={orbPosition} pulse={orbPulse} angle={orbAngle} />
     <mesh position={[0, -1.65, 2.5]} rotation={[-Math.PI / 2, 0, 0]}>
       <planeGeometry args={[7, 0.05]} />
       <meshBasicMaterial color={palette.orange} transparent opacity={0.22 + progress * 0.1} />
@@ -160,6 +165,7 @@ function Fan({position, frame}: {position: [number, number, number]; frame: numb
 
 function UiOverlay({sceneNumber, plan, screenRecording, progress}: {sceneNumber: number; plan?: VisualPlan; screenRecording?: {assetPath?: string}; progress: number}) {
   if (sceneNumber === 1) return <div style={{position: 'absolute', top: '12%', left: '7%', right: '7%', color: palette.cream, fontFamily: 'Georgia, serif', fontSize: 58, fontWeight: 700, textShadow: '0 4px 12px #111'}}>Voice, without<br /><span style={{color: palette.gold}}>the per-minute bill.</span><div style={{width: 330, height: 7, marginTop: 16, background: palette.orange, borderRadius: 4}} /></div>;
+  if (plan?.uiComponent === 'none') return <div style={{position: 'absolute', top: '16%', left: '7%', color: palette.cream, fontFamily: 'Georgia, serif', fontSize: 42, fontWeight: 700, textShadow: '0 4px 12px #111'}}><span style={{display: 'inline-block', padding: '10px 18px', borderRadius: 14, background: '#17161Bdd', border: `2px solid ${palette.orange}`}}>{plan.heading}</span></div>;
   const title = plan?.heading ?? 'Explain the workflow';
   return <div style={{position: 'absolute', top: '12%', left: '3%', right: '3%', height: '30%', background: '#17161B', border: '3px solid #6D626A', borderRadius: 22, padding: '18px 22px', color: '#202027', fontFamily: 'Arial, sans-serif', boxSizing: 'border-box', boxShadow: '0 14px 28px #0008', overflow: 'hidden'}}>
     <div style={{display: 'flex', justifyContent: 'space-between', color: palette.orange, fontSize: 16, fontWeight: 900}}>STEP {Math.min(sceneNumber - 1, 7)}/7 <span style={{color: '#B6AEB4'}}>VoiceStudio · {title}</span></div>

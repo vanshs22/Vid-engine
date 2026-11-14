@@ -21,5 +21,5 @@ export function directScene(line: Line, scene: Scene): VisualPlan {
 }
 
 function plan(purpose: string, subject: string, action: string, uiComponent: VisualPlan['uiComponent'], camera: VisualPlan['camera'], animationPreset: VisualPlan['animationPreset'], stepIndex: number, heading: string): VisualPlan {
-  return {purpose, subject, action, uiComponent, camera, animationPreset, stepIndex, heading, motionSkills: motionSkillsForVisual(uiComponent, 'voice-studio-3d')};
+  return {purpose, subject, action, uiComponent, camera, shotType: camera === 'ui-push' ? 'ui-demo' : camera, animationPreset, stepIndex, heading, motionSkills: motionSkillsForVisual(uiComponent, 'voice-studio-3d')};
 }

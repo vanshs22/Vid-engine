@@ -17,6 +17,7 @@ export const VisualPlanSchema = z.object({
   subject: z.string().min(1),
   action: z.string().min(1),
   uiComponent: z.enum(['none', 'download', 'recording', 'voice-design', 'generate', 'caption-sync', 'permission', 'screen-recording']),
+  shotType: z.enum(['hook-wide', 'character-close', 'ui-demo', 'object-close', 'reaction', 'diagram', 'permission-wide']),
   camera: z.enum(['hook-wide', 'ui-push', 'character-close', 'object-close', 'permission-wide']),
   animationPreset: z.enum(['orb-pulse', 'download-progress', 'record-waveform', 'move-sliders', 'generate-waveform', 'caption-timeline', 'permission-reveal', 'screen-recording']),
   stepIndex: z.number().int().nonnegative(),
