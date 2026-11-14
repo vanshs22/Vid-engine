@@ -36,6 +36,15 @@ class Director:
         self.config = ProviderConfig()
 
     def create_state(self, request: ProjectRequest) -> ProductionState:
+        profile = self.store.load_page_profile(request.page_id)
+        if profile:
+            updates = {}
+            if request.style == 'voice-studio-3d': updates['style'] = profile.style
+            if request.caption_style == 'word-by-word': updates['caption_style'] = profile.caption_style
+            if request.voice_profile == 'default': updates['voice_profile'] = profile.voice_profile
+            if request.audio_profile == 'default': updates['audio_profile'] = profile.audio_profile
+            if not request.competitors: updates['competitors'] = profile.competitors
+            if updates: request = request.model_copy(update=updates)
         state = ProductionState(project=request, stage="planned")
         previous = self.store.load_state(request.project_id)
         if previous:

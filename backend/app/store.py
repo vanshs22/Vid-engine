@@ -17,6 +17,7 @@ class SQLiteStore:
             CREATE TABLE IF NOT EXISTS tasks (task_id TEXT PRIMARY KEY, project_id TEXT NOT NULL, payload TEXT NOT NULL);
             CREATE TABLE IF NOT EXISTS artifacts (artifact_id TEXT PRIMARY KEY, project_id TEXT NOT NULL, payload TEXT NOT NULL);
             CREATE TABLE IF NOT EXISTS lessons (lesson_id INTEGER PRIMARY KEY AUTOINCREMENT, project_id TEXT NOT NULL, payload TEXT NOT NULL);
+            CREATE TABLE IF NOT EXISTS page_profiles (page_id TEXT PRIMARY KEY, payload TEXT NOT NULL);
             """)
 
     def save_state(self, state: ProductionState) -> None:
@@ -39,6 +40,21 @@ class SQLiteStore:
     def load_lessons(self, project_id: str) -> list[dict]:
         with sqlite3.connect(self.path) as connection:
             rows = connection.execute("SELECT payload FROM lessons WHERE project_id=? ORDER BY lesson_id", (project_id,)).fetchall()
+        return [json.loads(row[0]) for row in rows]
+
+    def save_page_profile(self, profile) -> None:
+        with sqlite3.connect(self.path) as connection:
+            connection.execute("INSERT OR REPLACE INTO page_profiles(page_id,payload) VALUES(?,?)", (profile.page_id, profile.model_dump_json()))
+
+    def load_page_profile(self, page_id: str):
+        from .models import PageProfile
+        with sqlite3.connect(self.path) as connection:
+            row = connection.execute("SELECT payload FROM page_profiles WHERE page_id=?", (page_id,)).fetchone()
+        return PageProfile.model_validate_json(row[0]) if row else None
+
+    def list_page_profiles(self) -> list[dict]:
+        with sqlite3.connect(self.path) as connection:
+            rows = connection.execute("SELECT payload FROM page_profiles ORDER BY page_id").fetchall()
         return [json.loads(row[0]) for row in rows]
 
     def save_lesson(self, project_id: str, lesson: dict) -> None:

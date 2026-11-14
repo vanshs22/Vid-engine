@@ -4,7 +4,7 @@ from pathlib import Path
 
 from fastapi import FastAPI
 
-from .models import ProjectRequest
+from .models import PageProfile, ProjectRequest
 from .orchestrator import Director
 from .registry import AgentRegistry
 from .jobs import LocalJobQueue
@@ -33,8 +33,18 @@ def create_app(root: Path = Path('.')) -> FastAPI:
     def workflow_reject(workflow_id: str, stage: str, feedback: str):
         return workflow.reject(workflow_id, stage, feedback)
 
-
+    @app.get('/agents')
+    def agents():
         return [item.__dict__ for item in AgentRegistry().list()]
+
+    @app.post('/pages')
+    def save_page(profile: PageProfile):
+        director.store.save_page_profile(profile)
+        return profile.model_dump(mode='json')
+
+    @app.get('/pages')
+    def list_pages():
+        return director.store.list_page_profiles()
 
     @app.post('/jobs/run')
     def submit_job(request: ProjectRequest):

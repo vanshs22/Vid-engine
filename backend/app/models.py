@@ -47,10 +47,15 @@ class ArtifactType(str, Enum):
 
 class ProjectRequest(BaseModel):
     project_id: str = Field(default_factory=lambda: f"project-{uuid4().hex[:8]}")
+    page_id: str = "default"
     mode: ProductionMode = ProductionMode.creation
     topic: str = "How local voice generation works"
     duration_seconds: int = Field(default=30, ge=5, le=600)
     style: str = "voice-studio-3d"
+    caption_style: str = "word-by-word"
+    voice_profile: str = "default"
+    audio_profile: str = "default"
+    competitors: list[str] = Field(default_factory=list)
     platform: str = "short-form-vertical"
     reference_path: str | None = None
     raw_path: str | None = None
@@ -95,6 +100,19 @@ class Task(BaseModel):
     error: str | None = None
     created_at: str = Field(default_factory=now_iso)
     updated_at: str = Field(default_factory=now_iso)
+
+
+class PageProfile(BaseModel):
+    page_id: str
+    style: str = "voice-studio-3d"
+    caption_style: str = "word-by-word"
+    voice_profile: str = "default"
+    audio_profile: str = "default"
+    reference_urls: list[str] = Field(default_factory=list)
+    competitors: list[str] = Field(default_factory=list)
+    character_notes: str = ""
+    environment_notes: str = ""
+    saved_at: str = Field(default_factory=now_iso)
 
 
 class AgentResult(BaseModel):

@@ -6,7 +6,7 @@ from urllib.parse import urlencode
 from urllib.request import Request, urlopen
 
 from .jobs import LocalJobQueue
-from .models import ProjectRequest
+from .models import PageProfile, ProjectRequest
 from .orchestrator import Director
 
 
@@ -31,7 +31,23 @@ class TelegramBotService:
             message = update.get('message', {})
             text = message.get('text', '').strip()
             chat_id = message.get('chat', {}).get('id')
-            if text.startswith('/create ') and chat_id is not None:
+            if text.startswith('/page ') and chat_id is not None:
+                parts = text.split()
+                page_id = parts[1]
+                profile = self.director.store.load_page_profile(page_id)
+                if profile is None:
+                    profile = PageProfile(page_id=page_id)
+                    self.director.store.save_page_profile(profile)
+                self.send_message(str(chat_id), f'Page {page_id} saved. Style: {profile.style}; caption: {profile.caption_style}')
+            elif text.startswith('/competitor ') and chat_id is not None:
+                parts = text.split(maxsplit=2)
+                if len(parts) < 3: continue
+                page_id, competitor = parts[1], parts[2]
+                profile = self.director.store.load_page_profile(page_id) or PageProfile(page_id=page_id)
+                if competitor not in profile.competitors: profile.competitors.append(competitor)
+                self.director.store.save_page_profile(profile)
+                self.send_message(str(chat_id), f'Saved competitor for {page_id}: {competitor}')
+            elif text.startswith('/create ') and chat_id is not None:
                 topic = text.removeprefix('/create ').strip()
                 request = ProjectRequest(topic=topic)
                 self.queue.submit(request.project_id, lambda request=request: self.director.run(request))

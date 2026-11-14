@@ -74,3 +74,32 @@ class VisionReviewProvider:
         from pathlib import Path
         first = Path(frame_paths[0]).read_bytes() if frame_paths else None
         return GeminiProvider(self.config).review(prompt, first)
+
+
+@dataclass
+class LLMRouter:
+    """FreeLLMAPI first, direct GPT-compatible endpoint second."""
+
+    config: ProviderConfig
+
+    def available(self) -> bool:
+        return self.config.llm_enabled
+
+    def generate(self, messages: list[dict], model: str | None = None, response_format: dict | None = None) -> dict:
+        errors: list[str] = []
+        routes = [
+            (self.config.freellmapi_api_key, self.config.freellmapi_base_url, self.config.freellmapi_model),
+            (self.config.fallback_llm_api_key, self.config.fallback_llm_base_url, self.config.fallback_llm_model),
+        ]
+        for key, base_url, route_model in routes:
+            if not key: continue
+            try:
+                cfg = ProviderConfig(freellmapi_base_url=base_url, freellmapi_api_key=key, freellmapi_model=route_model, fallback_llm_base_url=base_url, fallback_llm_api_key=key, fallback_llm_model=route_model, gemini_api_key=self.config.gemini_api_key, gemini_model=self.config.gemini_model, provider_timeout_seconds=self.config.provider_timeout_seconds)
+                return OpenAICompatibleProvider(cfg).generate(messages, model or route_model, response_format)
+            except Exception as exc:
+                errors.append(str(exc))
+        raise RuntimeError('All configured LLM routes failed: ' + ' | '.join(errors))
+
+    def text(self, messages: list[dict], model: str | None = None) -> str:
+        body = self.generate(messages, model)
+        return body['choices'][0]['message']['content']

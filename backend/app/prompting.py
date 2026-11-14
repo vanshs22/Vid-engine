@@ -4,7 +4,7 @@ import json
 from dataclasses import dataclass
 
 from .config import ProviderConfig
-from .providers import OpenAICompatibleProvider
+from .providers import LLMRouter
 
 
 SYSTEM_PROMPT = """You are the Prompt Director for a professional AI video production OS.
@@ -22,7 +22,7 @@ class PromptDirector:
     config: ProviderConfig
 
     def build(self, task: str, input_data: dict) -> dict:
-        provider = OpenAICompatibleProvider(self.config)
+        provider = LLMRouter(self.config)
         if not provider.available():
             return {"provider": "deterministic", "system": SYSTEM_PROMPT, "task": task, "input": input_data, "instructions": self._fallback(task, input_data)}
         response = provider.generate([

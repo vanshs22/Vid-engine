@@ -7,7 +7,7 @@ from pathlib import Path
 from .base import Agent, AgentContext
 from ..models import AgentResult, Artifact, ArtifactType, ProductionState, Task, TaskStatus
 from ..agent_reach import AgentReachAdapter
-from ..providers import OpenAICompatibleProvider, ResearchProvider, VisionReviewProvider
+from ..providers import LLMRouter, ResearchProvider, VisionReviewProvider
 from ..editing import RawFootageEditor
 
 
@@ -23,7 +23,7 @@ class ResearchAgent(Agent):
         if state.project.reference_path and state.project.reference_path.startswith(('http://', 'https://')):
             source = ResearchProvider().fetch_url(state.project.reference_path)
         if source and context.settings.llm_enabled:
-            text = OpenAICompatibleProvider(context.settings).text([{'role': 'system', 'content': 'Summarize factual claims with source URLs. Do not invent facts.'}, {'role': 'user', 'content': json.dumps(source)[:100000]}])
+            text = LLMRouter(context.settings).text([{'role': 'system', 'content': 'Summarize factual claims with source URLs. Do not invent facts.'}, {'role': 'user', 'content': json.dumps(source)[:100000]}])
             path.write_text(f"# Research brief\n\nTopic: {state.project.topic}\n\n{text}\n\nSource: {source['url']}\n")
             return AgentResult(agent=self.name, status=TaskStatus.completed, artifacts=[artifact(state, ArtifactType.research, path, self.name, provider='llm')])
         path.write_text(f"# Research brief\n\nTopic: {state.project.topic}\n\nLocal MVP mode: claims require human review before publication.\n")
@@ -39,9 +39,11 @@ class TrendResearchAgent(Agent):
         if not adapter.available():
             return AgentResult(agent=self.name, status=TaskStatus.skipped, message="Agent-Reach CLI is not installed")
         queries = []
-        for channel in ('youtube', 'twitter', 'reddit'):
-            result = adapter.search(channel, f"{state.project.niche} {state.project.topic}")
-            queries.append(result)
+        terms = [state.project.topic, *state.project.competitors]
+        for term in terms:
+            for channel in ('youtube', 'twitter', 'reddit'):
+                result = adapter.search(channel, f"{state.project.niche} {term}")
+                queries.append(result)
         path = context.workspace / 'trend-research.json'
         path.write_text(json.dumps({'topic': state.project.topic, 'niche': state.project.niche, 'results': queries}, indent=2) + '\\n')
         return AgentResult(agent=self.name, status=TaskStatus.completed, artifacts=[artifact(state, ArtifactType.research, path, self.name, channels=['youtube', 'twitter', 'reddit'])])
@@ -53,7 +55,7 @@ class ScriptWriterAgent(Agent):
         path = context.workspace / "script-brief.md"
         if context.settings.llm_enabled:
             prompt = f"Write a concise {state.project.duration_seconds}-second vertical explainer script about {state.project.topic}. Use a hook, clear beats, and a conclusion. Return plain text only."
-            text = OpenAICompatibleProvider(context.settings).text([{'role': 'system', 'content': 'You are a professional short-form script writer. Never invent factual claims.'}, {'role': 'user', 'content': prompt}])
+            text = LLMRouter(context.settings).text([{'role': 'system', 'content': 'You are a professional short-form script writer. Never invent factual claims.'}, {'role': 'user', 'content': prompt}])
             path.write_text(f"# Approved script draft\n\n{text}\n")
             provider = 'llm'
         else:
