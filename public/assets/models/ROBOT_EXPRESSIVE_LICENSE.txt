@@ -1,0 +1,7 @@
+RobotExpressive.glb
+
+Source: https://threejs.org/examples/models/gltf/RobotExpressive/RobotExpressive.glb
+Attribution: Tomás Laulhé; modifications by Don McCurdy.
+License: CC0 1.0, as credited by the Three.js example asset.
+
+This asset is optional. The renderer falls back to procedural geometry when it is absent.

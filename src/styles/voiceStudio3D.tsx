@@ -68,7 +68,7 @@ function StudioGeometry({frame, sceneNumber, progress, characterModelPath}: {fra
     <Laptop position={[-2.3, -0.35, 0.1]} />
     <Microphone position={[0.05, 0.15, 0.5]} />
     <Fan position={[3.0, -0.6, 0.5]} frame={frame} />
-    {characterModelPath ? <GltfCharacter url={characterModelPath} state={sceneNumber === 4 ? 'record' : sceneNumber === 6 ? 'talk' : 'idle'} position={[-1.65, -0.85, 0.35]} scale={1.2} /> : <Presenter position={[-1.65, -0.85, 0.35]} bob={presenterBob} gesture={gesture} />}
+    {characterModelPath ? <GltfCharacter url={characterModelPath} state={sceneNumber === 4 ? 'record' : sceneNumber === 6 ? 'talk' : 'idle'} position={[-1.45, -1.18, 0.35]} scale={0.62} /> : <Presenter position={[-1.65, -0.85, 0.35]} bob={presenterBob} gesture={gesture} />}
     <VoiceOrb position={[1.65, 1.15, 0.45]} pulse={orbPulse} angle={orbAngle} />
     <mesh position={[0, -1.65, 2.5]} rotation={[-Math.PI / 2, 0, 0]}>
       <planeGeometry args={[7, 0.05]} />
