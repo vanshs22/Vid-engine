@@ -1,4 +1,5 @@
 import type {Line, Scene, VisualPlan} from '../../types/project';
+import {motionSkillsForVisual} from '../motion/capabilities';
 
 /**
  * Deterministic sentence-to-visual director. It is deliberately provider-free:
@@ -20,5 +21,5 @@ export function directScene(line: Line, scene: Scene): VisualPlan {
 }
 
 function plan(purpose: string, subject: string, action: string, uiComponent: VisualPlan['uiComponent'], camera: VisualPlan['camera'], animationPreset: VisualPlan['animationPreset'], stepIndex: number, heading: string): VisualPlan {
-  return {purpose, subject, action, uiComponent, camera, animationPreset, stepIndex, heading};
+  return {purpose, subject, action, uiComponent, camera, animationPreset, stepIndex, heading, motionSkills: motionSkillsForVisual(uiComponent, 'voice-studio-3d')};
 }

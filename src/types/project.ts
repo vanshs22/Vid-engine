@@ -21,6 +21,7 @@ export const VisualPlanSchema = z.object({
   animationPreset: z.enum(['orb-pulse', 'download-progress', 'record-waveform', 'move-sliders', 'generate-waveform', 'caption-timeline', 'permission-reveal', 'screen-recording']),
   stepIndex: z.number().int().nonnegative(),
   heading: z.string().min(1),
+  motionSkills: z.array(z.string()).default([]),
 });
 
 const SceneSchema = z.object({
