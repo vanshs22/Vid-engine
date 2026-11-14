@@ -61,7 +61,7 @@ function VideoComposition(inputProps: unknown) {
         return (
           <Sequence key={scene.id} from={range.from} durationInFrames={range.durationInFrames} name={scene.id}>
             <SceneLayer scene={directedScene} durationInFrames={range.durationInFrames}>
-              {directedScene.visualStyle === 'three-proof' ? <ThreeProofScene scene={directedScene} /> : directedScene.visualStyle === 'stick-story' ? <StickStoryScene scene={directedScene} /> : directedScene.visualStyle === 'voice-studio-3d' ? <VoiceStudio3DScene scene={directedScene} /> : directedScene.visualStyle === 'voice-studio' ? <VoiceStudioScene scene={directedScene} /> : <InsideOutScene scene={directedScene} />}
+              {directedScene.visualStyle === 'three-proof' ? <ThreeProofScene scene={directedScene} /> : directedScene.visualStyle === 'stick-story' || directedScene.visualStyle === 'claude-animation' ? <StickStoryScene scene={directedScene} /> : directedScene.visualStyle === 'voice-studio-3d' ? <VoiceStudio3DScene scene={directedScene} /> : directedScene.visualStyle === 'voice-studio' ? <VoiceStudioScene scene={directedScene} /> : <InsideOutScene scene={directedScene} />}
               <CaptionOverlay chunks={captionChunks} offsetSeconds={lineTiming?.startSeconds ?? 0} theme={directedScene.visualStyle === 'voice-studio' || directedScene.visualStyle === 'voice-studio-3d' ? 'voice-studio' : 'default'} />
             </SceneLayer>
           </Sequence>
