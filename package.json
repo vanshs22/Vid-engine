@@ -13,6 +13,7 @@
     "mix:audio": ".venv/bin/python python/mix.py projects/sample/project.json",
     "cache:scenes": "tsx scripts/scene-cache.ts projects/sample/project.json",
     "render:scenes": "npm run prepare:render && tsx scripts/render-scenes.ts projects/sample/project.json",
+    "stitch:scenes": "tsx scripts/stitch-scenes.ts projects/sample/project.json",
     "capture:screen": "tsx scripts/capture-screen.ts",
     "studio": "remotion studio src/index.tsx",
     "prepare:render": "tsx scripts/prepare-render.ts",
