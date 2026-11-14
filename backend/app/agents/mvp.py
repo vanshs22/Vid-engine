@@ -41,7 +41,7 @@ class TrendResearchAgent(Agent):
         queries = []
         terms = [state.project.topic, *state.project.competitors]
         for term in terms:
-            for channel in ('youtube', 'twitter', 'reddit'):
+            for channel in ('youtube', 'twitter', 'reddit', 'instagram', 'tiktok'):
                 result = adapter.search(channel, f"{state.project.niche} {term}")
                 queries.append(result)
         path = context.workspace / 'trend-research.json'

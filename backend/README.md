@@ -95,4 +95,4 @@ agent-reach channels
 agent-reach youtube search "your niche topic"
 ```
 
-Set `trend_research=true` in the project request. The `trend_research` agent queries YouTube, Twitter, and Reddit when the CLI is available; otherwise it records a skipped optional task and does not block production.
+Set `trend_research=true` in the project request. The `trend_research` agent queries YouTube, Twitter/X, Reddit, Instagram, and TikTok when those channels are available in Agent-Reach; unsupported channels are recorded as non-blocking failures and do not stop production.
