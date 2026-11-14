@@ -1,0 +1,17 @@
+node_modules/
+__pycache__/
+out/
+.cache/
+.tmp/
+*.log
+.env
+.env.*
+!.env.example
+models/
+.venv/
+.venv-agent/
+projects/*/data/
+projects/*/agent-artifacts/
+projects/*/renders/
+public/generated/
+reference/
