@@ -31,7 +31,7 @@ const SceneSchema = z.object({
   environment: z.string().min(1),
   camera: z.object({preset: z.string().min(1)}),
   animation: z.array(z.string()).default([]),
-  transition: z.enum(['cut', 'fade', 'crossfade']).default('cut'),
+  transition: z.enum(['cut', 'fade', 'crossfade', 'flash', 'slide', 'zoom']).default('cut'),
   audioCues: z.array(z.object({type: z.string(), atWord: z.string().optional()})).default([]),
   assets: z.object({characterModelPath: z.string().min(1).optional(), environmentModelPath: z.string().min(1).optional()}).optional(),
   visualPlan: VisualPlanSchema.optional(),

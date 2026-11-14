@@ -1,4 +1,4 @@
-import {Composition, Sequence, AbsoluteFill, Audio, interpolate, staticFile, useCurrentFrame, useVideoConfig} from 'remotion';
+import {Composition, Sequence, AbsoluteFill, Audio, staticFile, useCurrentFrame, useVideoConfig} from 'remotion';
 import type {ReactNode} from 'react';
 import sampleProject from '../projects/sample/project.json';
 import {CaptionOverlay} from './components/CaptionOverlay';
@@ -12,6 +12,7 @@ import {ThreeProofScene} from './styles/threeProof';
 import {StickStoryScene} from './styles/stickStory';
 import {VoiceStudioScene} from './styles/voiceStudio';
 import {VoiceStudio3DScene} from './styles/voiceStudio3D';
+import {SceneTransition} from './transitions/sceneTransition';
 
 const project = parseProject(sampleProject);
 const timing = estimateTiming(project);
@@ -74,11 +75,10 @@ function VideoComposition(inputProps: unknown) {
 
 function SceneLayer({scene, durationInFrames, children}: {scene: ProjectScene; durationInFrames: number; children: ReactNode}) {
   const frame = useCurrentFrame();
-  const fadeFrames = Math.min(12, Math.max(1, Math.floor(durationInFrames / 2)));
-  const opacity = scene.transition === 'cut'
-    ? 1
-    : interpolate(frame, [0, fadeFrames, Math.max(fadeFrames, durationInFrames - fadeFrames), durationInFrames], [0, 1, 1, 0], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'});
-  return <AbsoluteFill style={{opacity}}>{children}</AbsoluteFill>;
+  return <AbsoluteFill>
+    {children}
+    <SceneTransition kind={scene.transition as 'cut' | 'fade' | 'crossfade' | 'flash' | 'slide' | 'zoom'} frame={frame} durationInFrames={durationInFrames} />
+  </AbsoluteFill>;
 }
 
 type ProjectScene = ReturnType<typeof parseProject>['scenes'][number];
