@@ -11,6 +11,7 @@
     "validate": "tsx scripts/validate-project.ts projects/sample/project.json",
     "timing": "tsx scripts/generate-timing.ts",
     "mix:audio": ".venv/bin/python python/mix.py projects/sample/project.json",
+    "assets:generate": ".venv/bin/python python/generate_asset_library.py",
     "cache:scenes": "tsx scripts/scene-cache.ts projects/sample/project.json",
     "render:scenes": "npm run prepare:render && tsx scripts/render-scenes.ts projects/sample/project.json",
     "stitch:scenes": "tsx scripts/stitch-scenes.ts projects/sample/project.json",

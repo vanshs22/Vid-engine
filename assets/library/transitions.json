@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "principle": "Use a transition only when the story or motion motivates it.",
+  "presets": [
+    {"id":"cut","use":"same subject or action continues","implementation":"src/transitions/sceneTransition.tsx"},
+    {"id":"flash","use":"impact, reveal, or strong beat","implementation":"src/transitions/sceneTransition.tsx"},
+    {"id":"slide","use":"screen or camera moves laterally","implementation":"src/transitions/sceneTransition.tsx"},
+    {"id":"zoom","use":"move into a detail or interface","implementation":"src/transitions/sceneTransition.tsx"},
+    {"id":"fade","use":"time, mood, or story chapter change","implementation":"src/transitions/sceneTransition.tsx"},
+    {"id":"brush-wipe","use":"hand-painted or stickman style","implementation":"capability adapter; keep frame-driven"},
+    {"id":"whip-cut","use":"fast cartoon action or directional movement","implementation":"capability adapter; preserve screen direction"},
+    {"id":"match-cut","use":"same shape/action bridges two scenes","implementation":"scene plan required"}
+  ],
+  "inspiration_sources":["Remocn/remocn MIT","bangtutorial/bang-motion MIT","JohnHeibel/ClaudeAnimationBase MIT","artemnovitckii/claude-animation-skills MIT"]
+}

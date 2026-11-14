@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "note": "These are production heuristics, not guaranteed virality or copied creator formats.",
+  "presets":[
+    {"id":"hook-first","rules":["show the subject on frame one","put the strongest claim in the first 1.5 seconds","avoid silent lead-ins"]},
+    {"id":"visual-change-2s","rules":["introduce a meaningful visual change every 2-3 seconds","never count a caption-only change as a new visual"]},
+    {"id":"literal-action","rules":["show named objects when spoken","animate the action being described","use UI only when the narration describes software"]},
+    {"id":"reaction-payoff","rules":["show cause before reaction","give the character a readable reaction","return to the opening motif at the ending"]},
+    {"id":"caption-safe","rules":["use aligned word timings","keep captions below the mouth and above platform controls","validate overflow"]},
+    {"id":"sound-beat","rules":["place restrained SFX on visual events","duck music under speech","avoid sound effects on every cut"]}
+  ]
+}

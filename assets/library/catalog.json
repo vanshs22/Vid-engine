@@ -1,0 +1,24 @@
+{
+  "version": 1,
+  "policy": "Only bundled assets with explicit license metadata may ship. External assets require a source and license check.",
+  "characters": [
+    {"id":"robot-expressive-cc0","path":"assets/library/models/RobotExpressive.glb","license":"CC0-1.0","source":"https://threejs.org/examples/models/gltf/RobotExpressive/RobotExpressive.glb","tags":["humanoid","rigged","morph-targets","animations"]}
+  ],
+  "environments": [],
+  "music": [
+    {"id":"cinematic-bed","path":"assets/library/audio/music/cinematic-bed.wav","license":"generated-by-project","tags":["cinematic","warm","explainer"]},
+    {"id":"tech-pulse","path":"assets/library/audio/music/tech-pulse.wav","license":"generated-by-project","tags":["technology","ui","product"]},
+    {"id":"suspense-drone","path":"assets/library/audio/music/suspense-drone.wav","license":"generated-by-project","tags":["documentary","mystery","tension"]}
+  ],
+  "sfx": [
+    {"id":"whoosh","path":"assets/library/audio/sfx/whoosh.wav","license":"generated-by-project"},
+    {"id":"swirl","path":"assets/library/audio/sfx/swirl.wav","license":"generated-by-project"},
+    {"id":"click","path":"assets/library/audio/sfx/click.wav","license":"generated-by-project"},
+    {"id":"pop","path":"assets/library/audio/sfx/pop.wav","license":"generated-by-project"},
+    {"id":"impact","path":"assets/library/audio/sfx/impact.wav","license":"generated-by-project"},
+    {"id":"riser","path":"assets/library/audio/sfx/riser.wav","license":"generated-by-project"},
+    {"id":"success","path":"assets/library/audio/sfx/success.wav","license":"generated-by-project"},
+    {"id":"sparkle","path":"assets/library/audio/sfx/sparkle.wav","license":"generated-by-project"},
+    {"id":"tick","path":"assets/library/audio/sfx/tick.wav","license":"generated-by-project"}
+  ]
+}
