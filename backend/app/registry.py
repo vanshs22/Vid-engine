@@ -15,6 +15,7 @@ class AgentDefinition:
 MVP_AGENTS: tuple[AgentDefinition, ...] = (
     AgentDefinition("director", "orchestration", "Own production state, dependencies, retries, approvals and delivery", ("task_store", "agent_registry"), ("project:read", "project:write")),
     AgentDefinition("research", "research", "Create a local research placeholder and source ledger", ("filesystem",), ("research:write",)),
+    AgentDefinition("trend_research", "research", "Find platform trends and competitor/reference patterns through Agent-Reach when configured", ("agent-reach",), ("research:write",)),
     AgentDefinition("script_writer", "story", "Create or normalize the script brief", ("filesystem",), ("script:write",)),
     AgentDefinition("script_critic", "story", "Check pacing, repetition, unsupported claims and duration", ("filesystem",), ("script:read",)),
     AgentDefinition("prompt_designer", "creative", "Turn approved scene intent into structured visual plans", ("filesystem",), ("storyboard:read", "storyboard:write")),

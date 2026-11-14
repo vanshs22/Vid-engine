@@ -6,6 +6,7 @@ from pathlib import Path
 
 from .base import Agent, AgentContext
 from ..models import AgentResult, Artifact, ArtifactType, ProductionState, Task, TaskStatus
+from ..agent_reach import AgentReachAdapter
 from ..providers import OpenAICompatibleProvider, ResearchProvider, VisionReviewProvider
 from ..editing import RawFootageEditor
 
@@ -27,6 +28,23 @@ class ResearchAgent(Agent):
             return AgentResult(agent=self.name, status=TaskStatus.completed, artifacts=[artifact(state, ArtifactType.research, path, self.name, provider='llm')])
         path.write_text(f"# Research brief\n\nTopic: {state.project.topic}\n\nLocal MVP mode: claims require human review before publication.\n")
         return AgentResult(agent=self.name, status=TaskStatus.completed, artifacts=[artifact(state, ArtifactType.research, path, self.name, provider='deterministic')])
+
+
+class TrendResearchAgent(Agent):
+    name = "trend_research"
+    def run(self, task, state, context):
+        if not state.project.trend_research:
+            return AgentResult(agent=self.name, status=TaskStatus.skipped, message="Trend research not requested")
+        adapter = AgentReachAdapter()
+        if not adapter.available():
+            return AgentResult(agent=self.name, status=TaskStatus.skipped, message="Agent-Reach CLI is not installed")
+        queries = []
+        for channel in ('youtube', 'twitter', 'reddit'):
+            result = adapter.search(channel, f"{state.project.niche} {state.project.topic}")
+            queries.append(result)
+        path = context.workspace / 'trend-research.json'
+        path.write_text(json.dumps({'topic': state.project.topic, 'niche': state.project.niche, 'results': queries}, indent=2) + '\\n')
+        return AgentResult(agent=self.name, status=TaskStatus.completed, artifacts=[artifact(state, ArtifactType.research, path, self.name, channels=['youtube', 'twitter', 'reddit'])])
 
 
 class ScriptWriterAgent(Agent):
@@ -140,4 +158,4 @@ class LearningAgent(Agent):
         return self.complete("Lesson recorded as a proposal")
 
 
-AGENT_CLASSES = {cls.name: cls for cls in [ResearchAgent, ScriptWriterAgent, ScriptCriticAgent, PromptDesignerAgent, StoryboardAgent, VisualProductionAgent, VoiceAgent, AlignmentAgent, RawEditingAgent, EditorAgent, QualityAgent, LearningAgent]}
+AGENT_CLASSES = {cls.name: cls for cls in [ResearchAgent, TrendResearchAgent, ScriptWriterAgent, ScriptCriticAgent, PromptDesignerAgent, StoryboardAgent, VisualProductionAgent, VoiceAgent, AlignmentAgent, RawEditingAgent, EditorAgent, QualityAgent, LearningAgent]}

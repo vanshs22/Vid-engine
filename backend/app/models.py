@@ -54,6 +54,9 @@ class ProjectRequest(BaseModel):
     platform: str = "short-form-vertical"
     reference_path: str | None = None
     raw_path: str | None = None
+    reference_url: str | None = None
+    niche: str = "general"
+    trend_research: bool = False
     simulate: bool = False
 
 

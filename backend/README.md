@@ -71,3 +71,28 @@ DATABASE_URL=postgresql://...
 ```
 
 Without provider keys, the Director uses deterministic local artifacts. `TelegramBotService` accepts `/create <topic>`, submits a persistent project job to the local queue, and sends a confirmation. Credentials are never stored in project artifacts.
+
+## FreeLLMAPI and Agent-Reach
+
+### FreeLLMAPI
+
+Run FreeLLMAPI separately, then configure:
+
+```bash
+FREELLMAPI_BASE_URL=http://localhost:3001/v1
+FREELLMAPI_API_KEY=...
+FREELLMAPI_MODEL=auto
+```
+
+The existing OpenAI-compatible provider then routes script/research/vision-supporting text requests through FreeLLMAPI. Its router/failover remains external; when it is unavailable, the Director uses deterministic local artifacts.
+
+### Agent-Reach
+
+Install Agent-Reach from its GitHub instructions, not an unrelated PyPI package, then enable trend research per request:
+
+```bash
+agent-reach channels
+agent-reach youtube search "your niche topic"
+```
+
+Set `trend_research=true` in the project request. The `trend_research` agent queries YouTube, Twitter, and Reddit when the CLI is available; otherwise it records a skipped optional task and does not block production.
