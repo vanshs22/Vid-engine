@@ -1,0 +1,31 @@
+{
+  "id": "ai-video-demo",
+  "title": "How This AI Video Studio Works",
+  "format": { "width": 1080, "height": 1920, "fps": 30 },
+  "targetDurationSeconds": 30,
+  "style": "voice-studio-3d",
+  "captionStyle": "word-by-word",
+  "voice": { "provider": "kokoro-onnx", "name": "af_heart", "speed": 0.95 },
+  "music": { "mode": "procedural" },
+  "lines": [
+    { "id": "line-01", "text": "A good AI video starts before the first frame is rendered.", "caption": "START BEFORE THE *FRAME", "sceneId": "demo-01", "gapSeconds": 0.25 },
+    { "id": "line-02", "text": "You give the director a topic, a style, and an audience.", "caption": "TOPIC STYLE *AUDIENCE", "sceneId": "demo-02", "gapSeconds": 0.25 },
+    { "id": "line-03", "text": "The research agent finds useful facts and current examples.", "caption": "FIND THE *FACTS", "sceneId": "demo-03", "gapSeconds": 0.25 },
+    { "id": "line-04", "text": "The script writer turns those facts into a clear story.", "caption": "WRITE THE *STORY", "sceneId": "demo-04", "gapSeconds": 0.25 },
+    { "id": "line-05", "text": "The scene director chooses a screen, a character action, or a diagram.", "caption": "CHOOSE THE RIGHT *VISUAL", "sceneId": "demo-05", "gapSeconds": 0.25 },
+    { "id": "line-06", "text": "Kokoro creates the voice, while Whisper aligns every word.", "caption": "ALIGN EVERY *WORD", "sceneId": "demo-06", "gapSeconds": 0.25 },
+    { "id": "line-07", "text": "Remotion and Three.js turn that plan into moving scenes.", "caption": "MAKE IT *MOVE", "sceneId": "demo-07", "gapSeconds": 0.25 },
+    { "id": "line-08", "text": "Finally, quality control checks the video before you post it.", "caption": "CHECK BEFORE YOU *POST", "sceneId": "demo-08", "gapSeconds": 0.4 }
+  ],
+  "scenes": [
+    { "id": "demo-01", "lineId": "line-01", "visualStyle": "voice-studio-3d", "description": "Start before the frame", "environment": "warm recording studio", "camera": { "preset": "hook-wide" }, "animation": ["orb-pulse"], "transition": "cut", "audioCues": [] },
+    { "id": "demo-02", "lineId": "line-02", "visualStyle": "voice-studio-3d", "description": "Topic style audience", "environment": "warm recording studio", "camera": { "preset": "ui-push" }, "animation": ["move-sliders"], "transition": "cut", "audioCues": [] },
+    { "id": "demo-03", "lineId": "line-03", "visualStyle": "voice-studio-3d", "description": "Find the facts", "environment": "warm recording studio", "camera": { "preset": "ui-push" }, "animation": ["generate-waveform"], "transition": "cut", "audioCues": [] },
+    { "id": "demo-04", "lineId": "line-04", "visualStyle": "voice-studio-3d", "description": "Write the story", "environment": "warm recording studio", "camera": { "preset": "ui-push" }, "animation": ["generate-waveform"], "transition": "cut", "audioCues": [] },
+    { "id": "demo-05", "lineId": "line-05", "visualStyle": "voice-studio-3d", "description": "Choose the right visual", "environment": "warm recording studio", "camera": { "preset": "ui-push" }, "animation": ["screen-recording"], "transition": "cut", "audioCues": [] },
+    { "id": "demo-06", "lineId": "line-06", "visualStyle": "voice-studio-3d", "description": "Align every word", "environment": "warm recording studio", "camera": { "preset": "object-close" }, "animation": ["caption-timeline"], "transition": "cut", "audioCues": [] },
+    { "id": "demo-07", "lineId": "line-07", "visualStyle": "voice-studio-3d", "description": "Make it move", "environment": "warm recording studio", "camera": { "preset": "wide-payoff" }, "animation": ["orb-pulse", "point"], "transition": "cut", "audioCues": [] },
+    { "id": "demo-08", "lineId": "line-08", "visualStyle": "voice-studio-3d", "description": "Check before you post", "environment": "warm recording studio", "camera": { "preset": "permission-wide" }, "animation": ["permission-reveal"], "transition": "cut", "audioCues": [] }
+  ],
+  "sources": []
+}

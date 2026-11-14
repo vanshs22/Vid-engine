@@ -24,20 +24,25 @@ class ResearchProvider:
 @dataclass
 class OpenAICompatibleProvider:
     config: ProviderConfig = ProviderConfig()
+    base_url: str | None = None
+    api_key: str | None = None
+    default_model: str | None = None
 
     def available(self) -> bool:
-        return self.config.llm_enabled
+        return bool(self.api_key or self.config.llm_enabled)
 
     def generate(self, messages: list[dict], model: str | None = None, response_format: dict | None = None) -> dict:
         if not self.available():
             raise RuntimeError('No LLM provider configured; use deterministic local mode')
-        payload: dict = {'model': model or self.config.llm_model, 'messages': messages, 'temperature': 0.4}
+        base_url = self.base_url or self.config.fallback_llm_base_url
+        api_key = self.api_key or self.config.fallback_llm_api_key or self.config.freellmapi_api_key
+        route_model = model or self.default_model or self.config.fallback_llm_model
+        payload: dict = {'model': route_model, 'messages': messages, 'temperature': 0.4}
         if response_format: payload['response_format'] = response_format
         data = json.dumps(payload).encode()
-        request = Request(f"{self.config.llm_base_url.rstrip('/')}/chat/completions", data=data, headers={'Content-Type': 'application/json', 'Authorization': f'Bearer {self.config.llm_api_key}'})
+        request = Request(f"{base_url.rstrip('/')}/chat/completions", data=data, headers={'Content-Type': 'application/json', 'Authorization': f'Bearer {api_key}'})
         with urlopen(request, timeout=self.config.provider_timeout_seconds) as response:
-            body = json.loads(response.read().decode())
-        return body
+            return json.loads(response.read().decode())
 
     def text(self, messages: list[dict], model: str | None = None) -> str:
         body = self.generate(messages, model)
@@ -94,8 +99,7 @@ class LLMRouter:
         for key, base_url, route_model in routes:
             if not key: continue
             try:
-                cfg = ProviderConfig(freellmapi_base_url=base_url, freellmapi_api_key=key, freellmapi_model=route_model, fallback_llm_base_url=base_url, fallback_llm_api_key=key, fallback_llm_model=route_model, gemini_api_key=self.config.gemini_api_key, gemini_model=self.config.gemini_model, provider_timeout_seconds=self.config.provider_timeout_seconds)
-                return OpenAICompatibleProvider(cfg).generate(messages, model or route_model, response_format)
+                return OpenAICompatibleProvider(self.config, base_url=base_url, api_key=key, default_model=route_model).generate(messages, model or route_model, response_format)
             except Exception as exc:
                 errors.append(str(exc))
         raise RuntimeError('All configured LLM routes failed: ' + ' | '.join(errors))

@@ -50,7 +50,6 @@ def main() -> None:
         print(json.dumps([item.__dict__ for item in AgentRegistry().list()], indent=2))
         return
     if args.command == 'raw-plan':
-        from pathlib import Path
         pipeline = RawFootagePipeline()
         plan = pipeline.plan(Path(args.source), args.max_silence)
         Path(args.output).parent.mkdir(parents=True, exist_ok=True)
@@ -58,7 +57,6 @@ def main() -> None:
         print(plan.model_dump_json(indent=2))
         return
     if args.command == 'raw-render':
-        from pathlib import Path
         plan = __import__('backend.app.raw_pipeline', fromlist=['EditDecisionList']).EditDecisionList.model_validate_json(Path(args.plan).read_text())
         RawFootagePipeline().render(plan, Path(args.output))
         print(args.output)
